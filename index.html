@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sem Fronteiras - Formulários</title>
+    <title>Sem Fronteiras - Sistema</title>
 
     <link rel="icon" type="image/png" href="android-icon-192x192.png"> 
     
@@ -25,9 +25,14 @@
             position: relative; 
             padding-bottom: 40px;
             font-size: 16px; 
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .container {
             max-width: 700px;
+            width: 100%;
             margin: 0 auto;
             background: #fff;
             border-radius: 12px;
@@ -35,6 +40,108 @@
             padding: 25px;
             position: relative;
         }
+        
+        /* Tela de Login */
+        #login-screen {
+            text-align: center;
+        }
+        
+        .login-logo {
+            max-width: 300px;
+            margin: 20px auto;
+        }
+        
+        .login-form {
+            max-width: 400px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .login-form input {
+            margin-bottom: 15px;
+            padding: 12px;
+        }
+        
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+        
+        .login-footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        
+        .login-footer a {
+            color: #007bff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .login-mensagem {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .login-mensagem.erro {
+            background-color: #f8d7da;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            display: block;
+        }
+        
+        .login-mensagem.sucesso {
+            background-color: #d4edda;
+            color: #28a745;
+            border: 1px solid #28a745;
+            display: block;
+        }
+        
+        .login-mensagem.atencao {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+            display: block;
+        }
+        
+        /* Usuário logado */
+        .usuario-logado {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #007bff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .usuario-logado button {
+            margin: 0;
+            padding: 4px 10px;
+            font-size: 0.8em;
+            background-color: #6c757d;
+        }
+        
+        .usuario-logado button:hover {
+            background-color: #5a6268;
+        }
+        
         /* ESTILO: Logomarca */
         .logo {
             display: block;
@@ -75,6 +182,13 @@
             border: 1px solid #ccc;
             border-radius: 6px; 
             box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        
+        /* Estilo para campos inválidos */
+        input.invalido, select.invalido, textarea.invalido {
+            border: 2px solid #dc3545 !important;
+            background-color: #fff8f8 !important;
         }
         
         /* Container para o campo de coordenada e botão de busca */
@@ -84,7 +198,6 @@
             flex-wrap: wrap; 
         }
         
-        /* INPUT DENTRO DO INPUT-GROUP (Desktop) */
         .input-group input {
             flex-grow: 1;
             margin-top: 0;
@@ -115,6 +228,13 @@
             background-color: #f0f0f0;
             cursor: default;
         }
+        
+        input.editable-field {
+            background-color: #fff9c4 !important;
+            border: 2px solid #ffc107 !important;
+            cursor: text;
+        }
+        
         input.link-field {
             cursor: pointer;
             color: #007bff;
@@ -179,7 +299,8 @@
             border-radius: 8px;
             font-weight: bold;
             z-index: 10;
-            animation: fadeInOut 2.5s;
+            animation: fadeInOut 3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         @keyframes fadeInOut {
             0% { opacity: 0; top: -20px; }
@@ -199,15 +320,6 @@
             background: #5a6268;
         }
 
-        #home-buttons {
-            margin-top: 60px;
-        }
-        #home-buttons button {
-            width: 45%;
-            padding: 20px;
-            font-size: 1.2em; 
-        }
-
         .footer {
             position: absolute;
             right: 20px;
@@ -217,7 +329,6 @@
             font-weight: bold;
         }
 
-        /* Estilo para o alerta customizado */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -235,7 +346,7 @@
             background: white;
             padding: 25px;
             border-radius: 12px;
-            max-width: 400px;
+            max-width: 500px;
             text-align: center;
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
@@ -248,15 +359,23 @@
         .modal-content p {
             margin: 15px 0;
             line-height: 1.5;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
         }
         
         .modal-content button {
             margin: 10px;
-            min-width: 100px;
+            min-width: 120px;
         }
         
-        .modal-content .btn-confirmar {
+        .modal-content .btn-manter {
             background-color: #28a745;
+        }
+        
+        .modal-content .btn-alterar {
+            background-color: #ffc107;
+            color: #000;
         }
         
         .modal-content .btn-cancelar {
@@ -287,55 +406,28 @@
             color: black;
         }
 
-        /* Estilo para o painel de usuário */
-        .user-panel {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #dee2e6;
+        .id-info {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-top: 5px;
+            font-style: italic;
         }
         
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
+        .erros-lista {
+            text-align: left;
+            margin: 10px 0;
+            padding-left: 20px;
+            color: #dc3545;
         }
         
-        .user-info select {
-            flex: 2;
-            min-width: 200px;
+        .erros-lista li {
+            margin: 5px 0;
         }
         
-        .user-info button {
-            margin-top: 0;
-            padding: 8px 12px;
-        }
-        
-        .add-user-input {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            align-items: center;
-        }
-        
-        .add-user-input input {
-            flex: 2;
-            margin-top: 0;
-        }
-        
-        .small-button {
-            background-color: #6c757d;
-            padding: 8px 12px;
-            font-size: 0.9em;
-        }
-
         .motivo-field {
             margin-top: 15px;
         }
         
-        /* --- MEDIA QUERY PARA CELULARES --- */
         @media (max-width: 500px) {
             .container {
                 padding: 15px; 
@@ -367,230 +459,250 @@
                 margin-right: 0;
             }
             
-            .input-group:has(button:nth-child(3)) button:nth-child(2) {
-                 margin-right: 5px; 
-            }
-            
-            .input-group:has(button:only-child) button:only-child {
-                flex-basis: 100%;
-            }
-            
-            .user-info {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .user-info select {
-                width: 100%;
+            .usuario-logado {
+                position: static;
+                margin-bottom: 15px;
+                justify-content: center;
             }
         }
     </style>
 </head>
-<body onload="showScreen('home')">
+<body>
     <div class="container">
         <div id="mensagem" class="mensagem"></div>
         
-        <!-- Modal de confirmação personalizado -->
+        <!-- Tela de Login -->
+        <div id="login-screen">
+            <img src="https://i.imgur.com/dvzRyus.png" alt="Logomarca Sem Fronteiras" class="logo login-logo">
+            <h2>Sistema de Chamados</h2>
+            
+            <div class="login-form">
+                <h3>Login</h3>
+                <input type="text" id="login-nome" placeholder="Digite seu nome">
+                <input type="password" id="login-senha" placeholder="Digite sua senha">
+                <button onclick="fazerLogin()">Entrar</button>
+                
+                <div class="login-footer">
+                    <a onclick="mostrarPrimeiroAcesso()">Primeiro acesso? Clique aqui</a>
+                </div>
+                
+                <div id="login-mensagem" class="login-mensagem"></div>
+            </div>
+        </div>
+        
+        <!-- Tela de Primeiro Acesso -->
+        <div id="primeiro-acesso-screen" class="hidden">
+            <button type="button" class="back-button" onclick="voltarParaLogin()">Voltar</button>
+            
+            <img src="https://i.imgur.com/dvzRyus.png" alt="Logomarca Sem Fronteiras" class="logo">
+            <h2>Primeiro Acesso</h2>
+            
+            <div class="login-form">
+                <h3>Crie sua conta</h3>
+                <input type="text" id="novo-usuario-nome" placeholder="Digite seu nome completo">
+                <input type="password" id="novo-usuario-senha" placeholder="Digite sua senha (mínimo 4 caracteres)">
+                <input type="password" id="novo-usuario-confirma-senha" placeholder="Confirme sua senha">
+                <button onclick="criarPrimeiroAcesso()">Criar conta</button>
+                
+                <div id="primeiro-acesso-mensagem" class="login-mensagem"></div>
+            </div>
+        </div>
+        
+        <!-- Tela Principal do Sistema (após login) -->
+        <div id="sistema-screen" class="hidden">
+            <div class="usuario-logado">
+                <span id="usuarioLogadoNome"></span>
+                <button onclick="fazerLogout()">Sair</button>
+            </div>
+            
+            <div id="home-screen">
+                <img src="https://i.imgur.com/dvzRyus.png" alt="Logomarca Sem Fronteiras" class="logo">
+                <br>
+                <br>
+                <h2>Favor escolher uma das opções abaixo:</h2>
+
+                <div class="button-group" id="home-buttons">
+                    <button type="button" onclick="showForm('implantacao')">Implantação</button>
+                    <button type="button" onclick="showForm('ampliacao')">Ampliação</button>
+                </div>
+            </div>
+
+            <div id="form-screen" class="hidden">
+                <button type="button" class="back-button" id="back-btn" onclick="showScreen('home')">Voltar</button>
+
+                <img src="https://i.imgur.com/dvzRyus.png" alt="Logomarca Sem Fronteiras" class="logo logo-header">
+                <h2 id="titulo"></h2> 
+                
+                <form id="implantacao" class="hidden">
+                    <label>Coordenadas (Lat, Lon):</label>
+                    <div class="input-group">
+                        <input type="text" id="coordenadasImplantacao" onfocus="this.select()">
+                        <button type="button" onclick="geocodificarCoordenadas('implantacao')">Buscar</button>
+                    </div>
+
+                    <label>Endereço:</label>
+                    <div class="input-group">
+                        <input type="text" id="enderecoImplantacao"> 
+                        <button type="button" onclick="geocodificarEndereco('implantacao')">Buscar</button>
+                        <button type="button" onclick="buscarPorLocalizacaoAtual('implantacao')" class="gps-button">GPS</button>
+                    </div>
+
+                    <label>Localização (Link do Mapa):</label>
+                    <input type="text" id="localizacaoImplantacao" class="link-field" onclick="abrirLink('implantacao')" readonly placeholder="Link aparecerá aqui após a busca">
+
+                    <label>Quantidade:</label>
+                    <input type="number" id="quantidadeImplantacao" min="1" step="1" value="1">
+
+                    <label>ID(s):</label>
+                    <input type="text" id="idImplantacao" placeholder="Ex: ID1, ID2, ID3">
+                    <div class="id-info">Para múltiplos IDs, separe por vírgula: ID1, ID2, ID3</div>
+
+                    <label>Projeto:</label>
+                    <select id="projetoImplantacao" onchange="atualizarOLT('implantacao')">
+                        <option value="">Selecione um projeto</option>
+                        <option>FTTH Albert Sampaio</option>
+                        <option>FTTH Assis Brasil</option>
+                        <option>FTTH Benfica</option>
+                        <option>FTTH Bujari</option>
+                        <option>FTTH Cidade do Povo</option>
+                        <option>FTTH Maison Borges</option>
+                        <option>FTTH Município do Quinari</option>
+                        <option>FTTH Ouricuri</option>
+                        <option>FTTH Parte Alta 2</option>
+                        <option>FTTH Primeiro Distrito Data Center VLG</option>
+                        <option>FTTH Primeiro Distrito Esperança</option>
+                        <option>FTTH Primeiro Distrito Sobral</option>
+                        <option>FTTH Primeiro Distrito XGPON</option>
+                        <option>FTTH Segundo Distrito Belo Jardim</option>
+                        <option>FTTH Segundo Distrito Bom Jesus</option>
+                        <option>FTTH Sena Madureira</option>
+                        <option>FTTH Tancredo Neves</option>
+                        <option>FTTH Taquari</option>
+                        <option>FTTH Xavier Maia</option>
+                    </select>
+
+                    <label>OLT:</label>
+                    <input type="text" id="oltImplantacao" readonly>
+
+                    <label>Motivo da solicitação:</label>
+                    <div class="motivo-field">
+                        <select id="motivoSelectImplantacao" onchange="atualizarMotivoImplantacao()">
+                            <option value="">Selecione um motivo</option>
+                            <option>Atendimento de novos clientes na localidade</option>
+                            <option>Caixa lotada</option>
+                            <option>Mudança de endereço</option>
+                            <option>Outro (especificar)</option>
+                        </select>
+                        <textarea id="motivoOutroImplantacao" style="margin-top: 10px; display: none;" placeholder="Digite o motivo específico..."></textarea>
+                        <input type="text" id="motivoFinalImplantacao" style="display: none;">
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" onclick="gerarTexto('implantacao')">Gerar</button>
+                        <button type="button" class="limpar" onclick="limparFormulario('implantacao')">Limpar</button>
+                    </div>
+                </form>
+
+                <form id="ampliacao" class="hidden">
+                    <label>Coordenadas (Lat, Lon):</label>
+                    <div class="input-group">
+                        <input type="text" id="coordenadasAmpliacao" onfocus="this.select()">
+                        <button type="button" onclick="geocodificarCoordenadas('ampliacao')">Buscar</button>
+                    </div>
+
+                    <label>Endereço:</label>
+                    <div class="input-group">
+                        <input type="text" id="enderecoAmpliacao">
+                        <button type="button" onclick="geocodificarEndereco('ampliacao')">Buscar</button>
+                        <button type="button" onclick="buscarPorLocalizacaoAtual('ampliacao')" class="gps-button">GPS</button>
+                    </div>
+
+                    <label>Localização (Link do Mapa):</label>
+                    <input type="text" id="localizacaoAmpliacao" class="link-field" onclick="abrirLink('ampliacao')" readonly placeholder="Link aparecerá aqui após a busca">
+
+                    <label>Quantidade:</label>
+                    <input type="number" id="quantidadeAmpliacao" min="1" step="1" value="1" onchange="validarQuantidadeComIds()">
+
+                    <label>Projeto:</label>
+                    <select id="projetoAmpliacao" onchange="atualizarOLT('ampliacao')">
+                        <option value="">Selecione um projeto</option>
+                        <option>FTTH Albert Sampaio</option>
+                        <option>FTTH Assis Brasil</option>
+                        <option>FTTH Benfica</option>
+                        <option>FTTH Bujari</option>
+                        <option>FTTH Canaã</option>
+                        <option>FTTH Cidade do Povo</option>
+                        <option>FTTH Maison Borges</option>
+                        <option>FTTH Município do Quinari</option>
+                        <option>FTTH Ouricuri</option>
+                        <option>FTTH Parte Alta 2</option>
+                        <option>FTTH Primeiro Distrito Data Center VLG</option>
+                        <option>FTTH Primeiro Distrito Esperança</option>
+                        <option>FTTH Primeiro Distrito Sobral</option>
+                        <option>FTTH Primeiro Distrito XGPON</option>
+                        <option>FTTH Segundo Distrito Belo Jardim</option>
+                        <option>FTTH Segundo Distrito Bom Jesus</option>
+                        <option>FTTH Sena Madureira</option>
+                        <option>FTTH Tancredo Neves</option>
+                        <option>FTTH Taquari</option>
+                        <option>FTTH Xavier Maia</option>
+                    </select>
+
+                    <label>OLT:</label>
+                    <input type="text" id="oltAmpliacao" readonly>
+
+                    <label>ID(s):</label>
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <input type="text" id="idAmpliacao" onblur="validarQuantidadeComIds()" placeholder="Ex: ID1, ID2, ID3" style="flex: 1;">
+                        <span id="statusId" class="status-indicator status-verificando" style="display: none;">Verificando...</span>
+                    </div>
+                    <div class="id-info" id="idInfo">Para múltiplos IDs, separe por vírgula: ID1, ID2, ID3</div>
+
+                    <label>Motivo da solicitação:</label>
+                    <div class="motivo-field">
+                        <select id="motivoSelectAmpliacao" onchange="atualizarMotivoAmpliacao()">
+                            <option value="">Selecione um motivo</option>
+                            <option>Atendimento de novos clientes na localidade</option>
+                            <option>Caixa lotada</option>
+                            <option>Mudança de endereço</option>
+                            <option>Outro (especificar)</option>
+                        </select>
+                        <textarea id="motivoOutroAmpliacao" style="margin-top: 10px; display: none;" placeholder="Digite o motivo específico..."></textarea>
+                        <input type="text" id="motivoFinalAmpliacao" style="display: none;">
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" onclick="gerarTexto('ampliacao')" id="btnGerarAmpliacao">Gerar</button>
+                        <button type="button" class="validar" onclick="validarMultiplosIds()">Validar IDs</button>
+                        <button type="button" class="limpar" onclick="limparFormulario('ampliacao')">Limpar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Modal de confirmação -->
         <div id="confirmModal" class="modal-overlay">
             <div class="modal-content">
-                <h3>⚠️ ID já cadastrado!</h3>
+                <h3>📋 IDs já cadastrados!</h3>
                 <p id="modalMessage">Carregando...</p>
                 <div>
-                    <button class="btn-confirmar" onclick="confirmarContinuar(true)">Continuar</button>
-                    <button class="btn-cancelar" onclick="confirmarContinuar(false)">Cancelar</button>
+                    <button class="btn-manter" onclick="confirmarAcao('manter')">✅ Manter existentes (ignorar)</button>
+                    <button class="btn-alterar" onclick="confirmarAcao('alterar')">✏️ Alterar todos (sobrescrever)</button>
+                    <button class="btn-cancelar" onclick="confirmarAcao('cancelar')">❌ Cancelar</button>
                 </div>
             </div>
         </div>
         
-        <!-- Modal para adicionar usuário -->
-        <div id="addUserModal" class="modal-overlay">
+        <!-- Modal de erros -->
+        <div id="errosModal" class="modal-overlay">
             <div class="modal-content">
-                <h3>➕ Adicionar Novo Usuário</h3>
-                <p>Digite o nome do novo usuário:</p>
-                <input type="text" id="newUserName" placeholder="Ex: Maria Silva" style="margin-bottom: 15px;">
+                <h3>❌ Campos obrigatórios não preenchidos!</h3>
+                <p>Por favor, corrija os seguintes campos:</p>
+                <ul id="listaErros" class="erros-lista"></ul>
                 <div>
-                    <button class="btn-confirmar" onclick="adicionarUsuario()">Adicionar</button>
-                    <button class="btn-cancelar" onclick="fecharAddUserModal()">Cancelar</button>
+                    <button class="btn-cancelar" onclick="fecharErrosModal()">OK</button>
                 </div>
             </div>
-        </div>
-        
-        <div id="home-screen">
-            <img src="https://i.imgur.com/dvzRyus.png" alt="Logomarca Sem Fronteiras" class="logo">
-            <br>
-            <br>
-            <h2>Favor escolher uma das opções abaixo:</h2>
-
-            <div class="button-group" id="home-buttons">
-                <button type="button" onclick="showForm('implantacao')">Implantação</button>
-                <button type="button" onclick="showForm('ampliacao')">Ampliação</button>
-            </div>
-        </div>
-
-        <div id="form-screen" class="hidden">
-            <button type="button" class="back-button" id="back-btn" onclick="showScreen('home')">Voltar</button>
-
-            <img src="https://i.imgur.com/dvzRyus.png" alt="Logomarca Sem Fronteiras" class="logo logo-header">
-            <h2 id="titulo"></h2> 
-            
-            <!-- Painel de usuário - Aparece nos formulários -->
-            <div class="user-panel">
-                <h3>👤 Identificação do Usuário</h3>
-                <div class="user-info">
-                    <select id="usuarioSelect" onchange="atualizarUsuarioSelecionado()">
-                        <option value="">Selecione um usuário</option>
-                        <option value="Jhulio Cezar">Jhulio Cezar</option>
-                        <option value="Kaio Cezar">Kaio Cezar</option>
-                    </select>
-                    <button type="button" class="small-button" onclick="abrirModalAdicionarUsuario()">➕ Novo Usuário</button>
-                </div>
-                <div id="usuarioSelecionadoInfo" style="margin-top: 10px; font-weight: bold; color: #007bff; display: none;">
-                    ✅ Usuário: <span id="usuarioNomeExibido"></span>
-                </div>
-            </div>
-            
-            <form id="implantacao" class="hidden">
-                <label>Coordenadas (Lat, Lon):</label>
-                <div class="input-group">
-                    <input type="text" id="coordenadasImplantacao" onfocus="this.select()">
-                    <button type="button" onclick="geocodificarCoordenadas('implantacao')">Buscar</button>
-                </div>
-
-                <label>Endereço:</label>
-                <div class="input-group">
-                    <input type="text" id="enderecoImplantacao"> 
-                    <button type="button" onclick="geocodificarEndereco('implantacao')">Buscar</button>
-                    <button type="button" onclick="buscarPorLocalizacaoAtual('implantacao')" class="gps-button">GPS</button>
-                </div>
-
-                <label>Localização (Link do Mapa):</label>
-                <input type="text" id="localizacaoImplantacao" class="link-field" onclick="abrirLink('implantacao')" readonly placeholder="Link aparecerá aqui após a busca">
-
-                <label>Quantidade:</label>
-                <input type="number" id="quantidadeImplantacao" min="1" step="1" value="1">
-
-                <label>ID:</label>
-                <input type="text" id="idImplantacao">
-
-                <label>Projeto:</label>
-                <select id="projetoImplantacao" onchange="atualizarOLT('implantacao')">
-                    <option value="">Selecione um projeto</option>
-                    <option>FTTH Albert Sampaio</option>
-                    <option>FTTH Assis Brasil</option>
-                    <option>FTTH Benfica</option>
-                    <option>FTTH Bujari</option>
-                    <option>FTTH Cidade do Povo</option>
-                    <option>FTTH Maison Borges</option>
-                    <option>FTTH Município do Quinari</option>
-                    <option>FTTH Ouricuri</option>
-                    <option>FTTH Parte Alta 2</option>
-                    <option>FTTH Primeiro Distrito Data Center VLG</option>
-                    <option>FTTH Primeiro Distrito Esperança</option>
-                    <option>FTTH Primeiro Distrito Sobral</option>
-                    <option>FTTH Primeiro Distrito XGPON</option>
-                    <option>FTTH Segundo Distrito Belo Jardim</option>
-                    <option>FTTH Segundo Distrito Bom Jesus</option>
-                    <option>FTTH Sena Madureira</option>
-                    <option>FTTH Tancredo Neves</option>
-                    <option>FTTH Taquari</option>
-                    <option>FTTH Xavier Maia</option>
-                </select>
-
-                <label>OLT:</label>
-                <input type="text" id="oltImplantacao" readonly>
-
-                <label>Motivo da solicitação:</label>
-                <div class="motivo-field">
-                    <select id="motivoSelectImplantacao" onchange="atualizarMotivoImplantacao()">
-                        <option value="">Selecione um motivo</option>
-                        <option>Atendimento de novos clientes na localidade</option>
-                        <option>Caixa lotada</option>
-                        <option>Mudança de endereço</option>
-                        <option>Outro (especificar)</option>
-                    </select>
-                    <textarea id="motivoOutroImplantacao" style="margin-top: 10px; display: none;" placeholder="Digite o motivo específico..."></textarea>
-                    <input type="text" id="motivoFinalImplantacao" style="display: none;">
-                </div>
-
-                <div class="action-buttons">
-                    <button type="button" onclick="gerarTexto('implantacao')">Gerar</button>
-                    <button type="button" class="limpar" onclick="limparFormulario('implantacao')">Limpar</button>
-                </div>
-            </form>
-
-            <form id="ampliacao" class="hidden">
-                <label>Coordenadas (Lat, Lon):</label>
-                <div class="input-group">
-                    <input type="text" id="coordenadasAmpliacao" onfocus="this.select()">
-                    <button type="button" onclick="geocodificarCoordenadas('ampliacao')">Buscar</button>
-                </div>
-
-                <label>Endereço:</label>
-                <div class="input-group">
-                    <input type="text" id="enderecoAmpliacao">
-                    <button type="button" onclick="geocodificarEndereco('ampliacao')">Buscar</button>
-                    <button type="button" onclick="buscarPorLocalizacaoAtual('ampliacao')" class="gps-button">GPS</button>
-                </div>
-
-                <label>Localização (Link do Mapa):</label>
-                <input type="text" id="localizacaoAmpliacao" class="link-field" onclick="abrirLink('ampliacao')" readonly placeholder="Link aparecerá aqui após a busca">
-
-                <label>Quantidade:</label>
-                <input type="number" id="quantidadeAmpliacao" min="1" step="1" value="1">
-
-                <label>Projeto:</label>
-                <select id="projetoAmpliacao" onchange="atualizarOLT('ampliacao')">
-                    <option value="">Selecione um projeto</option>
-                    <option>FTTH Albert Sampaio</option>
-                    <option>FTTH Assis Brasil</option>
-                    <option>FTTH Benfica</option>
-                    <option>FTTH Bujari</option>
-                    <option>FTTH Canaã</option>
-                    <option>FTTH Cidade do Povo</option>
-                    <option>FTTH Maison Borges</option>
-                    <option>FTTH Município do Quinari</option>
-                    <option>FTTH Ouricuri</option>
-                    <option>FTTH Parte Alta 2</option>
-                    <option>FTTH Primeiro Distrito Data Center VLG</option>
-                    <option>FTTH Primeiro Distrito Esperança</option>
-                    <option>FTTH Primeiro Distrito Sobral</option>
-                    <option>FTTH Primeiro Distrito XGPON</option>
-                    <option>FTTH Segundo Distrito Belo Jardim</option>
-                    <option>FTTH Segundo Distrito Bom Jesus</option>
-                    <option>FTTH Sena Madureira</option>
-                    <option>FTTH Tancredo Neves</option>
-                    <option>FTTH Taquari</option>
-                    <option>FTTH Xavier Maia</option>
-                </select>
-
-                <label>OLT:</label>
-                <input type="text" id="oltAmpliacao" readonly>
-
-                <label>ID:</label>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <input type="text" id="idAmpliacao" onblur="verificarIdAmpliacao()" placeholder="Digite o ID">
-                    <span id="statusId" class="status-indicator status-verificando" style="display: none;">Verificando...</span>
-                </div>
-
-                <label>Motivo da solicitação:</label>
-                <div class="motivo-field">
-                    <select id="motivoSelectAmpliacao" onchange="atualizarMotivoAmpliacao()">
-                        <option value="">Selecione um motivo</option>
-                        <option>Atendimento de novos clientes na localidade</option>
-                        <option>Caixa lotada</option>
-                        <option>Mudança de endereço</option>
-                        <option>Outro (especificar)</option>
-                    </select>
-                    <textarea id="motivoOutroAmpliacao" style="margin-top: 10px; display: none;" placeholder="Digite o motivo específico..."></textarea>
-                    <input type="text" id="motivoFinalAmpliacao" style="display: none;">
-                </div>
-
-                <div class="action-buttons">
-                    <button type="button" onclick="gerarTexto('ampliacao')" id="btnGerarAmpliacao">Gerar</button>
-                    <button type="button" class="validar" onclick="validarEConfirmarAmpliacao()">Validar ID</button>
-                    <button type="button" class="limpar" onclick="limparFormulario('ampliacao')">Limpar</button>
-                </div>
-            </form>
         </div>
     </div>
     <div class="footer">
@@ -598,7 +710,7 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO - COLE SUA URL DO APPS SCRIPT AQUI
+        // CONFIGURAÇÃO - URL DO APPS SCRIPT
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwKnswKrS3VtffoqYw2hPKGCvb5ksrvpzB-2jFN7OPGPCTWcMoySaELGsesQqFGbJBFeg/exec';
         
         const oltMap = {
@@ -624,118 +736,127 @@
             "FTTH Xavier Maia": "Parte Alta"
         };
 
-        let idPendente = null;
-        let dadosPendentes = null;
         let usuarioAtual = '';
-
-        // Lista de usuários (inicia com valores padrão)
-        let usuarios = ['Jhulio Cezar', 'Kaio Cezar'];
+        let dadosBanco = null;
 
         function capitalize(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
         }
 
-        // Funções para gerenciar usuários
-        function carregarUsuarios() {
-            const select = document.getElementById('usuarioSelect');
-            select.innerHTML = '<option value="">Selecione um usuário</option>';
+        // FUNÇÕES DE LOGIN
+        function mostrarPrimeiroAcesso() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('primeiro-acesso-screen').classList.remove('hidden');
+        }
+
+        function voltarParaLogin() {
+            document.getElementById('primeiro-acesso-screen').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('primeiro-acesso-mensagem').className = 'login-mensagem';
+            document.getElementById('primeiro-acesso-mensagem').style.display = 'none';
+        }
+
+        async function fazerLogin() {
+            const nome = document.getElementById('login-nome').value.trim();
+            const senha = document.getElementById('login-senha').value.trim();
             
-            usuarios.forEach(usuario => {
-                const option = document.createElement('option');
-                option.value = usuario;
-                option.textContent = usuario;
-                select.appendChild(option);
-            });
-        }
-
-        function abrirModalAdicionarUsuario() {
-            document.getElementById('addUserModal').style.display = 'flex';
-            document.getElementById('newUserName').value = '';
-        }
-
-        function fecharAddUserModal() {
-            document.getElementById('addUserModal').style.display = 'none';
-        }
-
-        function adicionarUsuario() {
-            const novoUsuario = document.getElementById('newUserName').value.trim();
-            
-            if (!novoUsuario) {
-                mostrarMensagem('Digite um nome para o usuário', 'erro');
+            if (!nome || !senha) {
+                mostrarMensagemLogin('Preencha todos os campos!', 'erro');
                 return;
             }
             
-            if (usuarios.includes(novoUsuario)) {
-                mostrarMensagem('Usuário já existe!', 'erro');
+            try {
+                const url = `${APPS_SCRIPT_URL}?action=login&nome=${encodeURIComponent(nome)}&senha=${encodeURIComponent(senha)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    usuarioAtual = data.usuario;
+                    
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('sistema-screen').classList.remove('hidden');
+                    document.getElementById('usuarioLogadoNome').textContent = usuarioAtual;
+                    mostrarMensagem(`Bem-vindo, ${usuarioAtual}!`, 'sucesso');
+                } else {
+                    mostrarMensagemLogin(data.error || 'Erro ao fazer login', 'erro');
+                }
+            } catch (error) {
+                console.error('Erro no login:', error);
+                mostrarMensagemLogin('Erro de conexão', 'erro');
+            }
+        }
+
+        async function criarPrimeiroAcesso() {
+            const nome = document.getElementById('novo-usuario-nome').value.trim();
+            const senha = document.getElementById('novo-usuario-senha').value.trim();
+            const confirma = document.getElementById('novo-usuario-confirma-senha').value.trim();
+            
+            if (!nome || !senha || !confirma) {
+                mostrarMensagemPrimeiroAcesso('Preencha todos os campos!', 'erro');
                 return;
             }
             
-            usuarios.push(novoUsuario);
-            carregarUsuarios();
-            fecharAddUserModal();
-            mostrarMensagem(`Usuário ${novoUsuario} adicionado com sucesso!`, 'sucesso');
+            if (senha.length < 4) {
+                mostrarMensagemPrimeiroAcesso('A senha deve ter pelo menos 4 caracteres', 'erro');
+                return;
+            }
             
-            // Selecionar o novo usuário automaticamente
-            document.getElementById('usuarioSelect').value = novoUsuario;
-            atualizarUsuarioSelecionado();
-        }
-
-        function atualizarUsuarioSelecionado() {
-            const select = document.getElementById('usuarioSelect');
-            usuarioAtual = select.value;
+            if (senha !== confirma) {
+                mostrarMensagemPrimeiroAcesso('As senhas não conferem', 'erro');
+                return;
+            }
             
-            const infoDiv = document.getElementById('usuarioSelecionadoInfo');
-            const nomeSpan = document.getElementById('usuarioNomeExibido');
-            
-            if (usuarioAtual) {
-                nomeSpan.textContent = usuarioAtual;
-                infoDiv.style.display = 'block';
-            } else {
-                infoDiv.style.display = 'none';
+            try {
+                const formData = new URLSearchParams();
+                formData.append('action', 'primeiroAcesso');
+                formData.append('nome', nome);
+                formData.append('senha', senha);
+                
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    mostrarMensagemPrimeiroAcesso('Conta criada com sucesso! Faça login.', 'sucesso');
+                    setTimeout(() => {
+                        voltarParaLogin();
+                        document.getElementById('login-nome').value = nome;
+                    }, 2000);
+                } else {
+                    mostrarMensagemPrimeiroAcesso(data.error || 'Erro ao criar conta', 'erro');
+                }
+            } catch (error) {
+                console.error('Erro ao criar conta:', error);
+                mostrarMensagemPrimeiroAcesso('Erro de conexão', 'erro');
             }
         }
 
-        // Funções para gerenciar motivos
-        function atualizarMotivoImplantacao() {
-            const select = document.getElementById('motivoSelectImplantacao');
-            const outroTextarea = document.getElementById('motivoOutroImplantacao');
-            const motivoFinal = document.getElementById('motivoFinalImplantacao');
-            
-            if (select.value === 'Outro (especificar)') {
-                outroTextarea.style.display = 'block';
-                motivoFinal.value = '';
-            } else {
-                outroTextarea.style.display = 'none';
-                motivoFinal.value = select.value;
-            }
+        function fazerLogout() {
+            usuarioAtual = '';
+            document.getElementById('sistema-screen').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('login-nome').value = '';
+            document.getElementById('login-senha').value = '';
+            document.getElementById('login-mensagem').className = 'login-mensagem';
+            document.getElementById('login-mensagem').style.display = 'none';
         }
 
-        function atualizarMotivoAmpliacao() {
-            const select = document.getElementById('motivoSelectAmpliacao');
-            const outroTextarea = document.getElementById('motivoOutroAmpliacao');
-            const motivoFinal = document.getElementById('motivoFinalAmpliacao');
-            
-            if (select.value === 'Outro (especificar)') {
-                outroTextarea.style.display = 'block';
-                motivoFinal.value = '';
-            } else {
-                outroTextarea.style.display = 'none';
-                motivoFinal.value = select.value;
-            }
+        function mostrarMensagemLogin(texto, tipo) {
+            const msg = document.getElementById('login-mensagem');
+            msg.textContent = texto;
+            msg.className = `login-mensagem ${tipo}`;
         }
 
-        function getMotivoFinal(tipo) {
-            const select = document.getElementById(`motivoSelect${capitalize(tipo)}`);
-            const outroTextarea = document.getElementById(`motivoOutro${capitalize(tipo)}`);
-            const motivoFinal = document.getElementById(`motivoFinal${capitalize(tipo)}`);
-            
-            if (select.value === 'Outro (especificar)') {
-                return outroTextarea.value.trim() || 'Não especificado';
-            } else {
-                return select.value || 'Não especificado';
-            }
+        function mostrarMensagemPrimeiroAcesso(texto, tipo) {
+            const msg = document.getElementById('primeiro-acesso-mensagem');
+            msg.textContent = texto;
+            msg.className = `login-mensagem ${tipo}`;
         }
 
+        // FUNÇÕES DE NAVEGAÇÃO
         function showScreen(screenType) {
             const home = document.getElementById("home-screen");
             const formScreen = document.getElementById("form-screen");
@@ -766,7 +887,6 @@
             setAddressFieldsEditable(type, true);
             setCoordenadasEditable(type, true);
             
-            // Resetar status do ID
             if (type === 'ampliacao') {
                 const statusSpan = document.getElementById('statusId');
                 statusSpan.style.display = 'none';
@@ -774,58 +894,19 @@
             }
         }
 
-        function atualizarOLT(formType) {
-            const projetoSelect = document.getElementById(`projeto${capitalize(formType)}`);
-            const oltField = document.getElementById(`olt${capitalize(formType)}`);
-            oltField.value = oltMap[projetoSelect.value] || "";
-        }
-        
-        function abrirLink(tipo) {
-            const link = document.getElementById(`localizacao${capitalize(tipo)}`).value;
-            if (link && (link.startsWith('http://') || link.startsWith('https://'))) {
-                window.open(link, '_blank');
-            } else {
-                mostrarMensagem("Link de Localização inválido ou não disponível.", 'erro');
-            }
-        }
-
-        function buscarPorLocalizacaoAtual(tipo) {
-            mostrarMensagem("Aguardando localização GPS...", 'sucesso');
-            
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lon = position.coords.longitude;
-                        const coordenadas = `${lat}, ${lon}`;
-
-                        document.getElementById(`coordenadas${capitalize(tipo)}`).value = coordenadas;
-                        geocodificarCoordenadas(tipo);
-                    },
-                    (error) => {
-                        let msgErro = "Erro ao obter localização. Verifique as permissões de GPS.";
-                        if (error.code === 1) {
-                            msgErro = "Acesso à localização negado. Por favor, permita o uso do GPS nas configurações do seu aparelho/navegador.";
-                        }
-                        mostrarMensagem(msgErro, 'erro');
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 5000,
-                        maximumAge: 0
-                    }
-                );
-            } else {
-                mostrarMensagem("Geolocalização não suportada neste navegador/aparelho.", 'erro');
-            }
-        }
-
+        // FUNÇÕES DE GEOLOCALIZAÇÃO
         function setAddressFieldsEditable(tipo, editable) {
             const endereco = document.getElementById(`endereco${capitalize(tipo)}`);
             const localizacao = document.getElementById(`localizacao${capitalize(tipo)}`);
             
             endereco.readOnly = !editable;
             localizacao.readOnly = !editable;
+            
+            if (editable) {
+                endereco.classList.add('editable-field');
+            } else {
+                endereco.classList.remove('editable-field');
+            }
             
             localizacao.classList.toggle('link-field', !editable); 
         }
@@ -896,9 +977,15 @@
                     preencherCamposCoordenada(tipo, `${lat}, ${lon}`); 
                     preencherCamposEndereco(tipo, enderecoCompleto, localizacaoLink);
                     
-                    setAddressFieldsEditable(tipo, false);
-                    setCoordenadasEditable(tipo, false);
-                    mostrarMensagem("Endereço e Link de Localização preenchidos automaticamente.");
+                    if (enderecoCompleto.includes('Rua/Via desconhecida')) {
+                        setAddressFieldsEditable(tipo, true);
+                        setCoordenadasEditable(tipo, false);
+                        mostrarMensagem("⚠️ Endereço não encontrado. Por favor, digite o endereço correto manualmente.", 'atencao');
+                    } else {
+                        setAddressFieldsEditable(tipo, false);
+                        setCoordenadasEditable(tipo, false);
+                        mostrarMensagem("✅ Endereço e Link de Localização preenchidos automaticamente.");
+                    }
 
                 } else {
                     console.error('Geocodificação Reversa falhou:', data);
@@ -915,7 +1002,7 @@
                 setCoordenadasEditable(tipo, true);
             }
         }
-        
+
         async function geocodificarEndereco(tipo) {
             let enderecoInput = document.getElementById(`endereco${capitalize(tipo)}`).value.trim();
             const enderecoOriginal = enderecoInput; 
@@ -980,123 +1067,400 @@
             document.getElementById(`coordenadas${capitalize(tipo)}`).value = coordenadas;
         }
 
-        // FUNÇÕES DE INTEGRAÇÃO COM GOOGLE SHEETS
-        
-        async function verificarIdAmpliacao() {
-            const id = document.getElementById('idAmpliacao').value.trim();
+        function abrirLink(tipo) {
+            const link = document.getElementById(`localizacao${capitalize(tipo)}`).value;
+            if (link && (link.startsWith('http://') || link.startsWith('https://'))) {
+                window.open(link, '_blank');
+            } else {
+                mostrarMensagem("Link de Localização inválido ou não disponível.", 'erro');
+            }
+        }
+
+        function buscarPorLocalizacaoAtual(tipo) {
+            mostrarMensagem("Aguardando localização GPS...", 'sucesso');
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const coordenadas = `${lat}, ${lon}`;
+
+                        document.getElementById(`coordenadas${capitalize(tipo)}`).value = coordenadas;
+                        geocodificarCoordenadas(tipo);
+                    },
+                    (error) => {
+                        let msgErro = "Erro ao obter localização. Verifique as permissões de GPS.";
+                        if (error.code === 1) {
+                            msgErro = "Acesso à localização negado. Por favor, permita o uso do GPS nas configurações do seu aparelho/navegador.";
+                        }
+                        mostrarMensagem(msgErro, 'erro');
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 5000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                mostrarMensagem("Geolocalização não suportada neste navegador/aparelho.", 'erro');
+            }
+        }
+
+        function atualizarOLT(formType) {
+            const projetoSelect = document.getElementById(`projeto${capitalize(formType)}`);
+            const oltField = document.getElementById(`olt${capitalize(formType)}`);
+            oltField.value = oltMap[projetoSelect.value] || "";
+        }
+
+        // FUNÇÕES DE MOTIVO
+        function atualizarMotivoImplantacao() {
+            const select = document.getElementById('motivoSelectImplantacao');
+            const outroTextarea = document.getElementById('motivoOutroImplantacao');
+            const motivoFinal = document.getElementById('motivoFinalImplantacao');
+            
+            select.classList.remove('invalido');
+            
+            if (select.value === 'Outro (especificar)') {
+                outroTextarea.style.display = 'block';
+                motivoFinal.value = '';
+            } else {
+                outroTextarea.style.display = 'none';
+                motivoFinal.value = select.value;
+                outroTextarea.classList.remove('invalido');
+            }
+        }
+
+        function atualizarMotivoAmpliacao() {
+            const select = document.getElementById('motivoSelectAmpliacao');
+            const outroTextarea = document.getElementById('motivoOutroAmpliacao');
+            const motivoFinal = document.getElementById('motivoFinalAmpliacao');
+            
+            select.classList.remove('invalido');
+            
+            if (select.value === 'Outro (especificar)') {
+                outroTextarea.style.display = 'block';
+                motivoFinal.value = '';
+            } else {
+                outroTextarea.style.display = 'none';
+                motivoFinal.value = select.value;
+                outroTextarea.classList.remove('invalido');
+            }
+        }
+
+        function getMotivoFinal(tipo) {
+            const select = document.getElementById(`motivoSelect${capitalize(tipo)}`);
+            const outroTextarea = document.getElementById(`motivoOutro${capitalize(tipo)}`);
+            
+            if (select.value === 'Outro (especificar)') {
+                return outroTextarea.value.trim() || '';
+            } else {
+                return select.value || '';
+            }
+        }
+
+        // FUNÇÕES DE VALIDAÇÃO DE IDs
+        function processarMultiplosIds() {
+            const idsField = document.getElementById('idAmpliacao');
+            let idsTexto = idsField.value.trim();
+            
+            if (!idsTexto) return [];
+            
+            const formatoValido = /^[A-Za-z0-9]+(?:,\s*[A-Za-z0-9]+)*$/.test(idsTexto);
+            if (!formatoValido) {
+                mostrarMensagem('Formato inválido! Use apenas: ID1, ID2, ID3 (separado por vírgula e espaço)', 'erro');
+                idsField.classList.add('invalido');
+                return [];
+            }
+            
+            const ids = idsTexto.split(',').map(id => id.trim()).filter(id => id);
+            
+            for (const id of ids) {
+                if (!/^[A-Za-z0-9]+$/.test(id)) {
+                    mostrarMensagem(`ID inválido: "${id}". Use apenas letras e números, sem espaços`, 'erro');
+                    idsField.classList.add('invalido');
+                    return [];
+                }
+            }
+            
+            idsField.classList.remove('invalido');
+            return ids;
+        }
+
+        function validarQuantidadeComIds() {
+            const quantidade = parseInt(document.getElementById('quantidadeAmpliacao').value) || 1;
+            const ids = processarMultiplosIds();
+            
+            if (ids.length > 0 && ids.length !== quantidade) {
+                mostrarMensagem(`⚠️ A quantidade (${quantidade}) não corresponde ao número de IDs informados (${ids.length})`, 'atencao');
+            }
+        }
+
+        async function validarMultiplosIds() {
+            const ids = processarMultiplosIds();
+            const quantidade = parseInt(document.getElementById('quantidadeAmpliacao').value) || 1;
             const statusSpan = document.getElementById('statusId');
             
-            if (!id) {
+            if (ids.length === 0) {
                 statusSpan.style.display = 'none';
-                return null;
+                return;
+            }
+            
+            if (ids.length !== quantidade) {
+                mostrarMensagem(`⚠️ A quantidade (${quantidade}) deve ser igual ao número de IDs informados (${ids.length})`, 'atencao');
+                statusSpan.style.display = 'none';
+                return;
             }
             
             statusSpan.style.display = 'inline-block';
             statusSpan.className = 'status-indicator status-verificando';
             statusSpan.textContent = 'Verificando...';
             
-            try {
-                const url = `${APPS_SCRIPT_URL}?action=verificar&id=${encodeURIComponent(id)}`;
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                if (data.success) {
-                    if (data.existe) {
-                        statusSpan.className = 'status-indicator status-invalido';
-                        statusSpan.textContent = '❌ ID já cadastrado';
-                        
-                        // Mostrar modal de confirmação
-                        const modalMessage = document.getElementById('modalMessage');
-                        
-                        // Data já vem formatada do Apps Script como DD/MM/AAAA
-                        const dataFormatada = data.data || 'data não disponível';
-                        
-                        modalMessage.innerHTML = `O ID <strong>${id}</strong> já tem O.S cadastrada no dia <strong>${dataFormatada}</strong> por <strong>${data.responsavel || 'responsável não informado'}</strong> para o projeto <strong>${data.projeto || 'projeto não informado'}</strong>.<br><br>Deseja continuar mesmo assim?`;
-                        
-                        document.getElementById('confirmModal').style.display = 'flex';
-                        idPendente = id;
-                        
-                        return {
-                            existe: true,
-                            data: data
-                        };
+            const resultados = [];
+            let idsExistentes = [];
+            let idsDisponiveis = [];
+            
+            for (const id of ids) {
+                try {
+                    const url = `${APPS_SCRIPT_URL}?action=verificar&id=${encodeURIComponent(id)}`;
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    
+                    if (data.success && data.existe) {
+                        idsExistentes.push(id);
                     } else {
-                        statusSpan.className = 'status-indicator status-valido';
-                        statusSpan.textContent = '✅ ID disponível';
-                        return {
-                            existe: false
-                        };
+                        idsDisponiveis.push(id);
                     }
-                } else {
-                    statusSpan.style.display = 'none';
-                    mostrarMensagem('Erro ao verificar ID: ' + (data.error || 'erro desconhecido'), 'erro');
-                    return null;
+                } catch (error) {
+                    console.error('Erro na verificação do ID', id, error);
                 }
-            } catch (error) {
-                console.error('Erro na verificação:', error);
-                statusSpan.style.display = 'none';
-                mostrarMensagem('Erro de conexão ao verificar ID', 'erro');
-                return null;
+            }
+            
+            if (idsExistentes.length > 0) {
+                statusSpan.className = 'status-indicator status-invalido';
+                statusSpan.textContent = '❌ Alguns IDs já existem';
+                
+                let mensagem = '';
+                if (idsExistentes.length > 0) {
+                    mensagem += `<strong style="color: #dc3545;">IDs já cadastrados:</strong> ${idsExistentes.join(', ')}<br>`;
+                }
+                if (idsDisponiveis.length > 0) {
+                    mensagem += `<strong style="color: #28a745;">IDs disponíveis:</strong> ${idsDisponiveis.join(', ')}<br>`;
+                }
+                
+                mensagem += `<br><strong style="color: #ffc107;">O que deseja fazer com os IDs existentes?</strong>`;
+                
+                const modalMessage = document.getElementById('modalMessage');
+                modalMessage.innerHTML = mensagem;
+                document.getElementById('confirmModal').style.display = 'flex';
+                
+                dadosBanco = { idsExistentes, idsDisponiveis };
+                
+            } else {
+                statusSpan.className = 'status-indicator status-valido';
+                statusSpan.textContent = '✅ Todos IDs disponíveis';
+                dadosBanco = null;
             }
         }
-        
-        function validarEConfirmarAmpliacao() {
-            const id = document.getElementById('idAmpliacao').value.trim();
+
+        function confirmarAcao(acao) {
+            document.getElementById('confirmModal').style.display = 'none';
             
-            if (!id) {
-                mostrarMensagem('Por favor, digite um ID para validar', 'erro');
+            if (acao === 'cancelar') {
+                dadosBanco = null;
                 return;
             }
             
-            verificarIdAmpliacao();
-        }
-        
-        function confirmarContinuar(continuar) {
-            document.getElementById('confirmModal').style.display = 'none';
+            const ids = processarMultiplosIds();
+            const endereco = document.getElementById('enderecoAmpliacao').value;
+            const localizacao = document.getElementById('localizacaoAmpliacao').value;
+            const coordenadas = document.getElementById('coordenadasAmpliacao').value;
+            const projeto = document.getElementById('projetoAmpliacao').value;
+            const olt = document.getElementById('oltAmpliacao').value;
+            const motivo = getMotivoFinal('ampliacao');
             
-            if (continuar && dadosPendentes) {
-                // Usuário optou por continuar mesmo com ID duplicado
-                processarGeracaoAmpliacao(dadosPendentes);
-            } else if (continuar && idPendente) {
-                // Recuperar dados do formulário
-                const dados = {
-                    id: idPendente,
-                    endereco: document.getElementById('enderecoAmpliacao').value,
-                    coordenadas: document.getElementById('coordenadasAmpliacao').value,
-                    localizacao: document.getElementById('localizacaoAmpliacao').value,
-                    quantidade: document.getElementById('quantidadeAmpliacao').value,
-                    projeto: document.getElementById('projetoAmpliacao').value,
-                    olt: document.getElementById('oltAmpliacao').value,
-                    responsavel: usuarioAtual,
-                    motivo: getMotivoFinal('ampliacao')
-                };
-                processarGeracaoAmpliacao(dados);
+            let textoCompleto = '';
+            let contador = 0;
+            
+            if (acao === 'manter' && dadosBanco) {
+                for (const id of dadosBanco.idsDisponiveis) {
+                    const dados = {
+                        id: id,
+                        endereco: endereco,
+                        coordenadas: coordenadas,
+                        localizacao: localizacao,
+                        quantidade: 1,
+                        projeto: projeto,
+                        olt: olt,
+                        responsavel: usuarioAtual,
+                        motivo: motivo
+                    };
+                    
+                    textoCompleto += `Dados da Ampliação - ID: ${id}\n\n` +
+                        `ID: ${id}\n` +
+                        `Endereço: ${dados.endereco}\n` +
+                        `Localização: ${dados.localizacao}\n` +
+                        `Coordenadas: ${dados.coordenadas}\n` +
+                        `Quantidade: 1\n` +
+                        `Projeto: ${dados.projeto}\n` +
+                        `OLT: ${dados.olt}\n` +
+                        `Responsável: ${dados.responsavel}\n` +
+                        `Motivo: ${dados.motivo}\n\n` +
+                        `🆕 NOVA OS\n` +
+                        `----------------------------------------\n\n`;
+                    
+                    salvarAmpliacaoNoSheet(dados);
+                    contador++;
+                }
+                
+                if (dadosBanco.idsExistentes.length > 0) {
+                    textoCompleto += `\n⚠️ OS IGNORADAS (já existentes): ${dadosBanco.idsExistentes.join(', ')}\n`;
+                }
+                
+                navigator.clipboard.writeText(textoCompleto);
+                mostrarMensagem(`✅ ${contador} nova(s) OS gerada(s). ${dadosBanco.idsExistentes.length} ignorada(s) por já existirem.`, 'sucesso');
             }
             
-            idPendente = null;
-            dadosPendentes = null;
-        }
-        
-        async function processarGeracaoAmpliacao(dados) {
-            const texto = `Dados da Ampliação\n\n` +
-                `Endereço: ${dados.endereco}\n\n` +
-                `Localização: ${dados.localizacao}\n\n` +
-                `Coordenadas: ${dados.coordenadas}\n\n` +
-                `Quantidade: ${dados.quantidade}\n\n` +
-                `ID: ${dados.id}\n\n` +
-                `Projeto: ${dados.projeto}\n\n` +
-                `OLT: ${dados.olt}\n\n` +
-                `Responsável: ${dados.responsavel}\n\n` +
-                `Motivo: ${dados.motivo}\n\n`;
-
-            // Copiar para área de transferência
-            navigator.clipboard.writeText(texto);
-            mostrarMensagem("As informações foram copiadas com sucesso!");
+            if (acao === 'alterar') {
+                for (const id of ids) {
+                    const dados = {
+                        id: id,
+                        endereco: endereco,
+                        coordenadas: coordenadas,
+                        localizacao: localizacao,
+                        quantidade: 1,
+                        projeto: projeto,
+                        olt: olt,
+                        responsavel: usuarioAtual,
+                        motivo: motivo
+                    };
+                    
+                    const status = dadosBanco?.idsExistentes.includes(id) ? '✏️ SOBRESCRITA' : '🆕 NOVA';
+                    
+                    textoCompleto += `Dados da Ampliação - ID: ${id}\n\n` +
+                        `ID: ${id}\n` +
+                        `Endereço: ${endereco}\n` +
+                        `Localização: ${localizacao}\n` +
+                        `Coordenadas: ${coordenadas}\n` +
+                        `Quantidade: 1\n` +
+                        `Projeto: ${projeto}\n` +
+                        `OLT: ${olt}\n` +
+                        `Responsável: ${usuarioAtual}\n` +
+                        `Motivo: ${motivo}\n\n` +
+                        `${status}\n` +
+                        `----------------------------------------\n\n`;
+                    
+                    salvarAmpliacaoNoSheet(dados);
+                    contador++;
+                }
+                
+                navigator.clipboard.writeText(textoCompleto);
+                mostrarMensagem(`✅ ${contador} OS processadas (incluindo sobrescritas)!`, 'sucesso');
+            }
             
-            // Salvar no Google Sheets
-            await salvarAmpliacaoNoSheet(dados);
+            dadosBanco = null;
         }
-        
+
+        // FUNÇÕES DE VALIDAÇÃO DE CAMPOS
+        function validarCampos(tipo) {
+            const campos = [
+                { id: `coordenadas${capitalize(tipo)}`, nome: 'Coordenadas' },
+                { id: `endereco${capitalize(tipo)}`, nome: 'Endereço' },
+                { id: `localizacao${capitalize(tipo)}`, nome: 'Localização' },
+                { id: `quantidade${capitalize(tipo)}`, nome: 'Quantidade' },
+                { id: `id${capitalize(tipo)}`, nome: 'ID(s)' },
+                { id: `projeto${capitalize(tipo)}`, nome: 'Projeto' }
+            ];
+            
+            const erros = [];
+            
+            campos.forEach(campo => {
+                const elemento = document.getElementById(campo.id);
+                if (elemento) {
+                    elemento.classList.remove('invalido');
+                }
+            });
+            
+            campos.forEach(campo => {
+                const elemento = document.getElementById(campo.id);
+                if (!elemento) return;
+                
+                let valor = elemento.value.trim();
+                
+                if (campo.id.includes('quantidade')) {
+                    if (!valor || parseInt(valor) < 1) {
+                        erros.push(`${campo.nome} deve ser pelo menos 1`);
+                        elemento.classList.add('invalido');
+                    }
+                } else if (campo.id.includes('projeto')) {
+                    if (!valor || valor === '') {
+                        erros.push(`${campo.nome} deve ser selecionado`);
+                        elemento.classList.add('invalido');
+                    }
+                } else if (campo.id.includes('id') && tipo === 'ampliacao') {
+                    if (!valor) {
+                        erros.push(`${campo.nome} não pode estar vazio`);
+                        elemento.classList.add('invalido');
+                    } else {
+                        const formatoValido = /^[A-Za-z0-9]+(?:,\s*[A-Za-z0-9]+)*$/.test(valor);
+                        if (!formatoValido) {
+                            erros.push(`Formato inválido! Use: ID1, ID2, ID3 (apenas vírgula e espaço)`);
+                            elemento.classList.add('invalido');
+                        } else {
+                            const ids = valor.split(',').map(id => id.trim());
+                            const quantidade = parseInt(document.getElementById('quantidadeAmpliacao').value) || 1;
+                            
+                            if (ids.length !== quantidade) {
+                                erros.push(`Número de IDs (${ids.length}) não corresponde à quantidade (${quantidade})`);
+                                elemento.classList.add('invalido');
+                            }
+                        }
+                    }
+                } else {
+                    if (!valor) {
+                        erros.push(`${campo.nome} não pode estar vazio`);
+                        elemento.classList.add('invalido');
+                    }
+                }
+            });
+            
+            const motivoSelect = document.getElementById(`motivoSelect${capitalize(tipo)}`);
+            const motivoOutro = document.getElementById(`motivoOutro${capitalize(tipo)}`);
+            
+            motivoSelect.classList.remove('invalido');
+            if (motivoOutro) motivoOutro.classList.remove('invalido');
+            
+            if (!motivoSelect.value) {
+                erros.push('Motivo deve ser selecionado');
+                motivoSelect.classList.add('invalido');
+            } else if (motivoSelect.value === 'Outro (especificar)') {
+                if (!motivoOutro.value.trim()) {
+                    erros.push('Por favor, especifique o motivo');
+                    motivoOutro.classList.add('invalido');
+                }
+            }
+            
+            return erros;
+        }
+
+        function mostrarErros(erros) {
+            const listaErros = document.getElementById('listaErros');
+            listaErros.innerHTML = '';
+            
+            erros.forEach(erro => {
+                const li = document.createElement('li');
+                li.textContent = erro;
+                listaErros.appendChild(li);
+            });
+            
+            document.getElementById('errosModal').style.display = 'flex';
+        }
+
+        function fecharErrosModal() {
+            document.getElementById('errosModal').style.display = 'none';
+        }
+
+        // FUNÇÕES PRINCIPAIS
         async function salvarAmpliacaoNoSheet(dados) {
             try {
                 const formData = new URLSearchParams();
@@ -1117,119 +1481,53 @@
                 });
                 
                 const data = await response.json();
-                
-                if (data.success) {
-                    mostrarMensagem('✅ Chamado salvo com sucesso na planilha!', 'sucesso');
-                    return true;
-                } else {
-                    mostrarMensagem('❌ Erro ao salvar: ' + data.error, 'erro');
-                    return false;
-                }
+                return data.success;
             } catch (error) {
                 console.error('Erro ao salvar:', error);
-                mostrarMensagem('❌ Erro de conexão ao salvar', 'erro');
                 return false;
             }
         }
 
         function gerarTexto(tipo) {
-            // Verificar se usuário está selecionado
-            if (!usuarioAtual) {
-                mostrarMensagem("Por favor, selecione um usuário antes de gerar!", 'erro');
+            const erros = validarCampos(tipo);
+            
+            if (erros.length > 0) {
+                mostrarErros(erros);
                 return;
             }
 
             if (tipo === "implantacao") {
                 const motivo = getMotivoFinal('implantacao');
+                const idsTexto = document.getElementById("idImplantacao").value.trim();
+                const ids = idsTexto.split(',').map(id => id.trim()).filter(id => id);
+                const quantidade = parseInt(document.getElementById("quantidadeImplantacao").value) || 1;
                 
-                let texto = "";
-                texto += `Dados da Implantação\n\n`;
-                texto += `Endereço: ${document.getElementById("enderecoImplantacao").value}\n\n`;
-                texto += `Localização: ${document.getElementById("localizacaoImplantacao").value}\n\n`;
-                texto += `Coordenadas: ${document.getElementById("coordenadasImplantacao").value}\n\n`;
-                texto += `Quantidade: ${document.getElementById("quantidadeImplantacao").value}\n\n`;
-                texto += `ID: ${document.getElementById("idImplantacao").value}\n\n`;
-                texto += `Projeto: ${document.getElementById("projetoImplantacao").value}\n\n`;
-                texto += `OLT: ${document.getElementById("oltImplantacao").value}\n\n`;
-                texto += `Responsável: ${usuarioAtual}\n\n`;
-                texto += `Motivo: ${motivo}\n\n`;
-
-                // Validação de campos obrigatórios
-                const coords = document.getElementById("coordenadasImplantacao").value;
-                const address = document.getElementById("enderecoImplantacao").value;
-                const link = document.getElementById("localizacaoImplantacao").value;
-                const quantidade = document.getElementById("quantidadeImplantacao").value;
-                const id = document.getElementById("idImplantacao").value;
-                const projeto = document.getElementById("projetoImplantacao").value;
-
-                if (!coords || !address || !link || !quantidade || !id || !projeto) {
-                    mostrarMensagem("Preencha todos os campos obrigatórios antes de gerar.", 'erro');
+                if (ids.length !== quantidade) {
+                    mostrarMensagem(`⚠️ A quantidade (${quantidade}) deve ser igual ao número de IDs informados (${ids.length})`, 'atencao');
                     return;
                 }
+                
+                let textoCompleto = '';
+                
+                ids.forEach(id => {
+                    textoCompleto += `Dados da Implantação - ID: ${id}\n\n` +
+                        `Endereço: ${document.getElementById("enderecoImplantacao").value}\n` +
+                        `Localização: ${document.getElementById("localizacaoImplantacao").value}\n` +
+                        `Coordenadas: ${document.getElementById("coordenadasImplantacao").value}\n` +
+                        `Quantidade: 1\n` +
+                        `ID: ${id}\n` +
+                        `Projeto: ${document.getElementById("projetoImplantacao").value}\n` +
+                        `OLT: ${document.getElementById("oltImplantacao").value}\n` +
+                        `Responsável: ${usuarioAtual}\n` +
+                        `Motivo: ${motivo}\n\n` +
+                        `----------------------------------------\n\n`;
+                });
 
-                if (!motivo || motivo === 'Não especificado') {
-                    mostrarMensagem("Por favor, selecione ou digite um motivo válido.", 'erro');
-                    return;
-                }
-
-                navigator.clipboard.writeText(texto);
-                mostrarMensagem("As informações foram copiadas com sucesso!");
+                navigator.clipboard.writeText(textoCompleto);
+                mostrarMensagem(`✅ Script gerado com ${ids.length} OS de implantação!`, 'sucesso');
                 
             } else {
-                // Ampliação
-                const id = document.getElementById("idAmpliacao").value.trim();
-                const coords = document.getElementById("coordenadasAmpliacao").value;
-                const address = document.getElementById("enderecoAmpliacao").value;
-                const link = document.getElementById("localizacaoAmpliacao").value;
-                const quantidade = document.getElementById("quantidadeAmpliacao").value;
-                const projeto = document.getElementById("projetoAmpliacao").value;
-                const motivo = getMotivoFinal('ampliacao');
-
-                // Validar campos obrigatórios
-                if (!id || !coords || !address || !link || !quantidade || !projeto) {
-                    mostrarMensagem("Preencha todos os campos obrigatórios antes de gerar.", 'erro');
-                    return;
-                }
-
-                if (!motivo || motivo === 'Não especificado') {
-                    mostrarMensagem("Por favor, selecione ou digite um motivo válido.", 'erro');
-                    return;
-                }
-
-                // Verificar ID primeiro
-                verificarIdAmpliacao().then(resultado => {
-                    if (resultado && resultado.existe) {
-                        // O modal já será mostrado pela função verificarIdAmpliacao
-                        // Aguardar resposta do modal
-                        dadosPendentes = {
-                            id, 
-                            endereco: address, 
-                            coordenadas: coords, 
-                            localizacao: link, 
-                            quantidade, 
-                            projeto,
-                            olt: document.getElementById("oltAmpliacao").value,
-                            responsavel: usuarioAtual,
-                            motivo
-                        };
-                        return;
-                    }
-
-                    // Se não existe ou é novo, prosseguir
-                    const dados = {
-                        id,
-                        endereco: address,
-                        coordenadas: coords,
-                        localizacao: link,
-                        quantidade,
-                        projeto,
-                        olt: document.getElementById("oltAmpliacao").value,
-                        responsavel: usuarioAtual,
-                        motivo
-                    };
-                    
-                    processarGeracaoAmpliacao(dados);
-                });
+                validarMultiplosIds();
             }
         }
 
@@ -1243,14 +1541,18 @@
             setAddressFieldsEditable(tipo, true); 
             setCoordenadasEditable(tipo, true);
             
+            const campos = document.querySelectorAll(`#${tipo} input, #${tipo} select, #${tipo} textarea`);
+            campos.forEach(campo => {
+                campo.classList.remove('invalido');
+            });
+            
             if (tipo === 'ampliacao') {
-                // Resetar status do ID
                 const statusSpan = document.getElementById('statusId');
                 statusSpan.style.display = 'none';
                 statusSpan.className = 'status-indicator';
+                dadosBanco = null;
             }
             
-            // Resetar campos de motivo
             if (tipo === 'implantacao') {
                 document.getElementById('motivoOutroImplantacao').style.display = 'none';
                 document.getElementById('motivoOutroImplantacao').value = '';
@@ -1270,59 +1572,43 @@
 
             if (tipo === 'erro') {
                 msg.style.backgroundColor = '#dc3545';
+                msg.style.color = '#fff';
+            } else if (tipo === 'atencao') {
+                msg.style.backgroundColor = '#ffc107';
+                msg.style.color = '#000';
             } else {
                 msg.style.backgroundColor = '#28a745';
+                msg.style.color = '#fff';
             }
 
             msg.style.display = "block";
             
             msg.style.animation = 'none';
             void msg.offsetWidth;
-            msg.style.animation = 'fadeInOut 2.5s';
+            msg.style.animation = 'fadeInOut 3s';
 
             setTimeout(() => {
                 msg.style.display = "none";
-            }, 2500);
+            }, 3000);
         }
 
-        // Fechar modal se clicar fora
+        // Fechar modais clicando fora
         window.onclick = function(event) {
             const confirmModal = document.getElementById('confirmModal');
-            const addUserModal = document.getElementById('addUserModal');
+            const errosModal = document.getElementById('errosModal');
             
             if (event.target === confirmModal) {
                 confirmModal.style.display = 'none';
-                idPendente = null;
-                dadosPendentes = null;
+                dadosBanco = null;
             }
             
-            if (event.target === addUserModal) {
-                addUserModal.style.display = 'none';
+            if (event.target === errosModal) {
+                errosModal.style.display = 'none';
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            showScreen('home'); 
-            setAddressFieldsEditable('implantacao', true);
-            setAddressFieldsEditable('ampliacao', true);
-            setCoordenadasEditable('implantacao', true);
-            setCoordenadasEditable('ampliacao', true);
-            
-            // Carregar usuários
-            carregarUsuarios();
-            
-            // REGISTRO DO SERVICE WORKER
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('service-worker.js')
-                        .then(registration => {
-                            console.log('Service Worker registrado com sucesso:', registration.scope);
-                        })
-                        .catch(error => {
-                            console.log('Falha no registro do Service Worker:', error);
-                        });
-                });
-            }
+            // A tela de login já está visível por padrão
         });
     </script>
 </body>
