@@ -42,7 +42,7 @@
         }
         
         /* Tela de Login */
-        #login-screen {
+        #login-screen, #recuperar-senha-screen {
             text-align: center;
         }
         
@@ -75,6 +75,10 @@
         .login-footer {
             margin-top: 20px;
             font-size: 0.9em;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         .login-footer a {
@@ -150,11 +154,7 @@
             height: auto;
             margin: 0 auto 10px auto; 
         }
-        /* Ajuste de margem do Título do Formulário */
-        #form-screen .logo-header {
-             margin-bottom: 20px;
-        }
-
+        
         h2 {
             text-align: center;
             margin-bottom: 0; 
@@ -167,7 +167,7 @@
             font-size: 1.2em;
         }
         .hidden {
-            display: none;
+            display: none !important;
         }
         label {
             display: block;
@@ -185,13 +185,11 @@
             transition: all 0.3s ease;
         }
         
-        /* Estilo para campos inválidos */
         input.invalido, select.invalido, textarea.invalido {
             border: 2px solid #dc3545 !important;
             background-color: #fff8f8 !important;
         }
         
-        /* Container para o campo de coordenada e botão de busca */
         .input-group {
             display: flex;
             margin-top: 4px;
@@ -266,10 +264,6 @@
         }
         button:hover {
             background-color: #0056b3;
-        }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
         }
         .action-buttons {
             display: flex;
@@ -369,13 +363,8 @@
             min-width: 120px;
         }
         
-        .modal-content .btn-manter {
+        .modal-content .btn-confirmar {
             background-color: #28a745;
-        }
-        
-        .modal-content .btn-alterar {
-            background-color: #ffc107;
-            color: #000;
         }
         
         .modal-content .btn-cancelar {
@@ -464,6 +453,11 @@
                 margin-bottom: 15px;
                 justify-content: center;
             }
+            
+            .login-footer {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
@@ -478,12 +472,13 @@
             
             <div class="login-form">
                 <h3>Login</h3>
-                <input type="text" id="login-nome" placeholder="Digite seu nome">
-                <input type="password" id="login-senha" placeholder="Digite sua senha">
+                <input type="text" id="login-nome" placeholder="Digite seu nome" onkeypress="handleKeyPress(event, 'login')">
+                <input type="password" id="login-senha" placeholder="Digite sua senha" onkeypress="handleKeyPress(event, 'login')">
                 <button onclick="fazerLogin()">Entrar</button>
                 
                 <div class="login-footer">
-                    <a onclick="mostrarPrimeiroAcesso()">Primeiro acesso? Clique aqui</a>
+                    <a onclick="mostrarPrimeiroAcesso()">Primeiro acesso</a>
+                    <a onclick="mostrarRecuperarSenha()">Esqueci a senha</a>
                 </div>
                 
                 <div id="login-mensagem" class="login-mensagem"></div>
@@ -499,16 +494,40 @@
             
             <div class="login-form">
                 <h3>Crie sua conta</h3>
-                <input type="text" id="novo-usuario-nome" placeholder="Digite seu nome completo">
-                <input type="password" id="novo-usuario-senha" placeholder="Digite sua senha (mínimo 4 caracteres)">
-                <input type="password" id="novo-usuario-confirma-senha" placeholder="Confirme sua senha">
+                <input type="text" id="novo-usuario-nome" placeholder="Digite seu nome completo" onkeypress="handleKeyPress(event, 'primeiroAcesso')">
+                <input type="password" id="novo-usuario-senha" placeholder="Digite sua senha (mínimo 4 caracteres)" onkeypress="handleKeyPress(event, 'primeiroAcesso')">
+                <input type="password" id="novo-usuario-confirma-senha" placeholder="Confirme sua senha" onkeypress="handleKeyPress(event, 'primeiroAcesso')">
                 <button onclick="criarPrimeiroAcesso()">Criar conta</button>
                 
                 <div id="primeiro-acesso-mensagem" class="login-mensagem"></div>
             </div>
         </div>
         
-        <!-- Tela Principal do Sistema (após login) -->
+        <!-- Tela de Recuperar Senha -->
+        <div id="recuperar-senha-screen" class="hidden">
+            <button type="button" class="back-button" onclick="voltarParaLogin()">Voltar</button>
+            
+            <img src="https://i.imgur.com/dvzRyus.png" alt="Logomarca Sem Fronteiras" class="logo">
+            <h2>Recuperar Senha</h2>
+            
+            <div id="etapa1-recuperar" class="login-form">
+                <h3>Etapa 1: Solicitar código</h3>
+                <input type="text" id="recuperar-nome" placeholder="Digite seu nome" onkeypress="handleKeyPress(event, 'recuperarEtapa1')">
+                <button onclick="solicitarCodigoRecuperacao()">Solicitar código</button>
+            </div>
+            
+            <div id="etapa2-recuperar" class="login-form hidden">
+                <h3>Etapa 2: Alterar senha</h3>
+                <input type="text" id="recuperar-codigo" placeholder="Digite o código recebido" onkeypress="handleKeyPress(event, 'recuperarEtapa2')">
+                <input type="password" id="recuperar-nova-senha" placeholder="Nova senha (mínimo 4 caracteres)" onkeypress="handleKeyPress(event, 'recuperarEtapa2')">
+                <input type="password" id="recuperar-confirma-senha" placeholder="Confirme a nova senha" onkeypress="handleKeyPress(event, 'recuperarEtapa2')">
+                <button onclick="alterarSenhaRecuperacao()">Alterar senha</button>
+            </div>
+            
+            <div id="recuperar-senha-mensagem" class="login-mensagem"></div>
+        </div>
+        
+        <!-- Tela Principal do Sistema -->
         <div id="sistema-screen" class="hidden">
             <div class="usuario-logado">
                 <span id="usuarioLogadoNome"></span>
@@ -686,8 +705,8 @@
                 <h3>📋 IDs já cadastrados!</h3>
                 <p id="modalMessage">Carregando...</p>
                 <div>
-                    <button class="btn-manter" onclick="confirmarAcao('manter')">✅ Manter existentes (ignorar)</button>
-                    <button class="btn-alterar" onclick="confirmarAcao('alterar')">✏️ Alterar todos (sobrescrever)</button>
+                    <button class="btn-confirmar" onclick="confirmarAcao('manter')">✅ Manter existentes</button>
+                    <button class="btn-confirmar" onclick="confirmarAcao('alterar')" style="background-color: #ffc107; color: #000;">✏️ Sobrescrever</button>
                     <button class="btn-cancelar" onclick="confirmarAcao('cancelar')">❌ Cancelar</button>
                 </div>
             </div>
@@ -700,7 +719,7 @@
                 <p>Por favor, corrija os seguintes campos:</p>
                 <ul id="listaErros" class="erros-lista"></ul>
                 <div>
-                    <button class="btn-cancelar" onclick="fecharErrosModal()">OK</button>
+                    <button class="btn-confirmar" onclick="fecharErrosModal()">OK</button>
                 </div>
             </div>
         </div>
@@ -738,9 +757,26 @@
 
         let usuarioAtual = '';
         let dadosBanco = null;
+        let nomeRecuperacao = '';
 
         function capitalize(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // FUNÇÃO PARA TECLA ENTER
+        function handleKeyPress(event, tela) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                if (tela === 'login') {
+                    fazerLogin();
+                } else if (tela === 'primeiroAcesso') {
+                    criarPrimeiroAcesso();
+                } else if (tela === 'recuperarEtapa1') {
+                    solicitarCodigoRecuperacao();
+                } else if (tela === 'recuperarEtapa2') {
+                    alterarSenhaRecuperacao();
+                }
+            }
         }
 
         // FUNÇÕES DE LOGIN
@@ -749,11 +785,31 @@
             document.getElementById('primeiro-acesso-screen').classList.remove('hidden');
         }
 
+        function mostrarRecuperarSenha() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('recuperar-senha-screen').classList.remove('hidden');
+            document.getElementById('etapa1-recuperar').classList.remove('hidden');
+            document.getElementById('etapa2-recuperar').classList.add('hidden');
+            document.getElementById('recuperar-nome').value = '';
+            document.getElementById('recuperar-codigo').value = '';
+            document.getElementById('recuperar-nova-senha').value = '';
+            document.getElementById('recuperar-confirma-senha').value = '';
+            document.getElementById('recuperar-senha-mensagem').className = 'login-mensagem';
+            document.getElementById('recuperar-senha-mensagem').style.display = 'none';
+        }
+
         function voltarParaLogin() {
             document.getElementById('primeiro-acesso-screen').classList.add('hidden');
+            document.getElementById('recuperar-senha-screen').classList.add('hidden');
             document.getElementById('login-screen').classList.remove('hidden');
+            
+            // Limpar mensagens
+            document.getElementById('login-mensagem').className = 'login-mensagem';
+            document.getElementById('login-mensagem').style.display = 'none';
             document.getElementById('primeiro-acesso-mensagem').className = 'login-mensagem';
             document.getElementById('primeiro-acesso-mensagem').style.display = 'none';
+            document.getElementById('recuperar-senha-mensagem').className = 'login-mensagem';
+            document.getElementById('recuperar-senha-mensagem').style.display = 'none';
         }
 
         async function fazerLogin() {
@@ -834,6 +890,83 @@
             }
         }
 
+        async function solicitarCodigoRecuperacao() {
+            const nome = document.getElementById('recuperar-nome').value.trim();
+            
+            if (!nome) {
+                mostrarMensagemRecuperacao('Digite seu nome', 'erro');
+                return;
+            }
+            
+            nomeRecuperacao = nome;
+            
+            try {
+                const url = `${APPS_SCRIPT_URL}?action=recuperarSenha&nome=${encodeURIComponent(nome)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    mostrarMensagemRecuperacao(`Código gerado: ${data.codigo} (em produção seria enviado por email)`, 'sucesso');
+                    document.getElementById('etapa1-recuperar').classList.add('hidden');
+                    document.getElementById('etapa2-recuperar').classList.remove('hidden');
+                } else {
+                    mostrarMensagemRecuperacao(data.error || 'Erro ao solicitar código', 'erro');
+                }
+            } catch (error) {
+                console.error('Erro na recuperação:', error);
+                mostrarMensagemRecuperacao('Erro de conexão', 'erro');
+            }
+        }
+
+        async function alterarSenhaRecuperacao() {
+            const codigo = document.getElementById('recuperar-codigo').value.trim();
+            const novaSenha = document.getElementById('recuperar-nova-senha').value.trim();
+            const confirma = document.getElementById('recuperar-confirma-senha').value.trim();
+            
+            if (!codigo || !novaSenha || !confirma) {
+                mostrarMensagemRecuperacao('Preencha todos os campos!', 'erro');
+                return;
+            }
+            
+            if (novaSenha.length < 4) {
+                mostrarMensagemRecuperacao('A senha deve ter pelo menos 4 caracteres', 'erro');
+                return;
+            }
+            
+            if (novaSenha !== confirma) {
+                mostrarMensagemRecuperacao('As senhas não conferem', 'erro');
+                return;
+            }
+            
+            try {
+                const formData = new URLSearchParams();
+                formData.append('action', 'alterarSenha');
+                formData.append('nome', nomeRecuperacao);
+                formData.append('codigo', codigo);
+                formData.append('novaSenha', novaSenha);
+                
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    mostrarMensagemRecuperacao('Senha alterada com sucesso! Faça login.', 'sucesso');
+                    setTimeout(() => {
+                        voltarParaLogin();
+                        document.getElementById('login-nome').value = nomeRecuperacao;
+                    }, 2000);
+                } else {
+                    mostrarMensagemRecuperacao(data.error || 'Erro ao alterar senha', 'erro');
+                }
+            } catch (error) {
+                console.error('Erro ao alterar senha:', error);
+                mostrarMensagemRecuperacao('Erro de conexão', 'erro');
+            }
+        }
+
         function fazerLogout() {
             usuarioAtual = '';
             document.getElementById('sistema-screen').classList.add('hidden');
@@ -852,6 +985,12 @@
 
         function mostrarMensagemPrimeiroAcesso(texto, tipo) {
             const msg = document.getElementById('primeiro-acesso-mensagem');
+            msg.textContent = texto;
+            msg.className = `login-mensagem ${tipo}`;
+        }
+
+        function mostrarMensagemRecuperacao(texto, tipo) {
+            const msg = document.getElementById('recuperar-senha-mensagem');
             msg.textContent = texto;
             msg.className = `login-mensagem ${tipo}`;
         }
@@ -1248,7 +1387,7 @@
                     mensagem += `<strong style="color: #28a745;">IDs disponíveis:</strong> ${idsDisponiveis.join(', ')}<br>`;
                 }
                 
-                mensagem += `<br><strong style="color: #ffc107;">O que deseja fazer com os IDs existentes?</strong>`;
+                mensagem += `<br><strong style="color: #ffc107;">O que deseja fazer?</strong>`;
                 
                 const modalMessage = document.getElementById('modalMessage');
                 modalMessage.innerHTML = mensagem;
