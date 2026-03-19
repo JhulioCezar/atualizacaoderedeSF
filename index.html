@@ -400,6 +400,7 @@
             color: #6c757d;
             margin-top: 5px;
             font-style: italic;
+            display: none;
         }
         
         .erros-lista {
@@ -552,6 +553,7 @@
                 <img src="https://i.imgur.com/dvzRyus.png" alt="Logomarca Sem Fronteiras" class="logo logo-header">
                 <h2 id="titulo"></h2> 
                 
+                <!-- Formulário de Implantação -->
                 <form id="implantacao" class="hidden">
                     <label>Coordenadas (Lat, Lon):</label>
                     <div class="input-group">
@@ -571,10 +573,6 @@
 
                     <label>Quantidade:</label>
                     <input type="number" id="quantidadeImplantacao" min="1" step="1" value="1">
-
-                    <label>ID(s):</label>
-                    <input type="text" id="idImplantacao" placeholder="Ex: ID1, ID2, ID3">
-                    <div class="id-info">Para múltiplos IDs, separe por vírgula: ID1, ID2, ID3</div>
 
                     <label>Projeto:</label>
                     <select id="projetoImplantacao" onchange="atualizarOLT('implantacao')">
@@ -622,6 +620,7 @@
                     </div>
                 </form>
 
+                <!-- Formulário de Ampliação -->
                 <form id="ampliacao" class="hidden">
                     <label>Coordenadas (Lat, Lon):</label>
                     <div class="input-group">
@@ -640,7 +639,7 @@
                     <input type="text" id="localizacaoAmpliacao" class="link-field" onclick="abrirLink('ampliacao')" readonly placeholder="Link aparecerá aqui após a busca">
 
                     <label>Quantidade:</label>
-                    <input type="number" id="quantidadeAmpliacao" min="1" step="1" value="1" onchange="validarQuantidadeComIds()">
+                    <input type="number" id="quantidadeAmpliacao" min="1" step="1" value="1" onchange="validarQuantidadeComIds()" onkeyup="validarQuantidadeComIds()">
 
                     <label>Projeto:</label>
                     <select id="projetoAmpliacao" onchange="atualizarOLT('ampliacao')">
@@ -672,10 +671,10 @@
 
                     <label>ID(s):</label>
                     <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                        <input type="text" id="idAmpliacao" onblur="validarQuantidadeComIds()" placeholder="Ex: ID1, ID2, ID3" style="flex: 1;">
+                        <input type="text" id="idAmpliacao" onblur="validarQuantidadeComIds()" onkeyup="validarQuantidadeComIds()" placeholder="Ex: ID1, ID2, ID3" style="flex: 1;">
                         <span id="statusId" class="status-indicator status-verificando" style="display: none;">Verificando...</span>
                     </div>
-                    <div class="id-info" id="idInfo">Para múltiplos IDs, separe por vírgula: ID1, ID2, ID3</div>
+                    <div class="id-info" id="idInfo"></div>
 
                     <label>Motivo da solicitação:</label>
                     <div class="motivo-field">
@@ -803,7 +802,6 @@
             document.getElementById('recuperar-senha-screen').classList.add('hidden');
             document.getElementById('login-screen').classList.remove('hidden');
             
-            // Limpar mensagens
             document.getElementById('login-mensagem').className = 'login-mensagem';
             document.getElementById('login-mensagem').style.display = 'none';
             document.getElementById('primeiro-acesso-mensagem').className = 'login-mensagem';
@@ -1030,6 +1028,7 @@
                 const statusSpan = document.getElementById('statusId');
                 statusSpan.style.display = 'none';
                 statusSpan.className = 'status-indicator';
+                document.getElementById('idInfo').style.display = 'none';
             }
         }
 
@@ -1037,6 +1036,8 @@
         function setAddressFieldsEditable(tipo, editable) {
             const endereco = document.getElementById(`endereco${capitalize(tipo)}`);
             const localizacao = document.getElementById(`localizacao${capitalize(tipo)}`);
+            
+            if (!endereco || !localizacao) return;
             
             endereco.readOnly = !editable;
             localizacao.readOnly = !editable;
@@ -1052,7 +1053,9 @@
 
         function setCoordenadasEditable(tipo, editable) {
             const coordenadas = document.getElementById(`coordenadas${capitalize(tipo)}`);
-            coordenadas.readOnly = !editable;
+            if (coordenadas) {
+                coordenadas.readOnly = !editable;
+            }
         }
 
         async function geocodificarCoordenadas(tipo) {
@@ -1198,12 +1201,16 @@
         }
 
         function preencherCamposEndereco(tipo, endereco, localizacao) {
-            document.getElementById(`endereco${capitalize(tipo)}`).value = endereco;
-            document.getElementById(`localizacao${capitalize(tipo)}`).value = localizacao;
+            const enderecoField = document.getElementById(`endereco${capitalize(tipo)}`);
+            const localizacaoField = document.getElementById(`localizacao${capitalize(tipo)}`);
+            
+            if (enderecoField) enderecoField.value = endereco;
+            if (localizacaoField) localizacaoField.value = localizacao;
         }
         
         function preencherCamposCoordenada(tipo, coordenadas) {
-            document.getElementById(`coordenadas${capitalize(tipo)}`).value = coordenadas;
+            const coordenadasField = document.getElementById(`coordenadas${capitalize(tipo)}`);
+            if (coordenadasField) coordenadasField.value = coordenadas;
         }
 
         function abrirLink(tipo) {
@@ -1225,8 +1232,11 @@
                         const lon = position.coords.longitude;
                         const coordenadas = `${lat}, ${lon}`;
 
-                        document.getElementById(`coordenadas${capitalize(tipo)}`).value = coordenadas;
-                        geocodificarCoordenadas(tipo);
+                        const coordenadasField = document.getElementById(`coordenadas${capitalize(tipo)}`);
+                        if (coordenadasField) {
+                            coordenadasField.value = coordenadas;
+                            geocodificarCoordenadas(tipo);
+                        }
                     },
                     (error) => {
                         let msgErro = "Erro ao obter localização. Verifique as permissões de GPS.";
@@ -1249,7 +1259,9 @@
         function atualizarOLT(formType) {
             const projetoSelect = document.getElementById(`projeto${capitalize(formType)}`);
             const oltField = document.getElementById(`olt${capitalize(formType)}`);
-            oltField.value = oltMap[projetoSelect.value] || "";
+            if (projetoSelect && oltField) {
+                oltField.value = oltMap[projetoSelect.value] || "";
+            }
         }
 
         // FUNÇÕES DE MOTIVO
@@ -1257,6 +1269,8 @@
             const select = document.getElementById('motivoSelectImplantacao');
             const outroTextarea = document.getElementById('motivoOutroImplantacao');
             const motivoFinal = document.getElementById('motivoFinalImplantacao');
+            
+            if (!select || !outroTextarea || !motivoFinal) return;
             
             select.classList.remove('invalido');
             
@@ -1275,6 +1289,8 @@
             const outroTextarea = document.getElementById('motivoOutroAmpliacao');
             const motivoFinal = document.getElementById('motivoFinalAmpliacao');
             
+            if (!select || !outroTextarea || !motivoFinal) return;
+            
             select.classList.remove('invalido');
             
             if (select.value === 'Outro (especificar)') {
@@ -1291,8 +1307,10 @@
             const select = document.getElementById(`motivoSelect${capitalize(tipo)}`);
             const outroTextarea = document.getElementById(`motivoOutro${capitalize(tipo)}`);
             
+            if (!select) return '';
+            
             if (select.value === 'Outro (especificar)') {
-                return outroTextarea.value.trim() || '';
+                return outroTextarea ? outroTextarea.value.trim() || '' : '';
             } else {
                 return select.value || '';
             }
@@ -1301,25 +1319,26 @@
         // FUNÇÕES DE VALIDAÇÃO DE IDs
         function processarMultiplosIds() {
             const idsField = document.getElementById('idAmpliacao');
+            if (!idsField) return [];
+            
             let idsTexto = idsField.value.trim();
             
             if (!idsTexto) return [];
             
-            const formatoValido = /^[A-Za-z0-9]+(?:,\s*[A-Za-z0-9]+)*$/.test(idsTexto);
-            if (!formatoValido) {
-                mostrarMensagem('Formato inválido! Use apenas: ID1, ID2, ID3 (separado por vírgula e espaço)', 'erro');
-                idsField.classList.add('invalido');
-                return [];
-            }
-            
             const ids = idsTexto.split(',').map(id => id.trim()).filter(id => id);
+            let valido = true;
             
             for (const id of ids) {
                 if (!/^[A-Za-z0-9]+$/.test(id)) {
-                    mostrarMensagem(`ID inválido: "${id}". Use apenas letras e números, sem espaços`, 'erro');
-                    idsField.classList.add('invalido');
-                    return [];
+                    valido = false;
+                    break;
                 }
+            }
+            
+            if (!valido) {
+                mostrarMensagem('Formato inválido! Use apenas: ID1, ID2, ID3 (separado por vírgula e espaço)', 'erro');
+                idsField.classList.add('invalido');
+                return [];
             }
             
             idsField.classList.remove('invalido');
@@ -1327,18 +1346,39 @@
         }
 
         function validarQuantidadeComIds() {
-            const quantidade = parseInt(document.getElementById('quantidadeAmpliacao').value) || 1;
+            const quantidadeField = document.getElementById('quantidadeAmpliacao');
+            if (!quantidadeField) return;
+            
+            const quantidade = parseInt(quantidadeField.value) || 1;
             const ids = processarMultiplosIds();
+            const idInfo = document.getElementById('idInfo');
+            
+            if (!idInfo) return;
+            
+            if (quantidade > 1) {
+                idInfo.textContent = "Para múltiplos IDs, separe por vírgula: ID1, ID2, ID3";
+                idInfo.style.display = 'block';
+            } else {
+                idInfo.style.display = 'none';
+            }
             
             if (ids.length > 0 && ids.length !== quantidade) {
                 mostrarMensagem(`⚠️ A quantidade (${quantidade}) não corresponde ao número de IDs informados (${ids.length})`, 'atencao');
             }
+            
+            if (ids.length > 0 && ids.length === quantidade) {
+                verificarMultiplosIds();
+            }
         }
 
-        async function validarMultiplosIds() {
+        async function verificarMultiplosIds() {
             const ids = processarMultiplosIds();
-            const quantidade = parseInt(document.getElementById('quantidadeAmpliacao').value) || 1;
+            const quantidadeField = document.getElementById('quantidadeAmpliacao');
             const statusSpan = document.getElementById('statusId');
+            
+            if (!quantidadeField || !statusSpan) return;
+            
+            const quantidade = parseInt(quantidadeField.value) || 1;
             
             if (ids.length === 0) {
                 statusSpan.style.display = 'none';
@@ -1355,7 +1395,6 @@
             statusSpan.className = 'status-indicator status-verificando';
             statusSpan.textContent = 'Verificando...';
             
-            const resultados = [];
             let idsExistentes = [];
             let idsDisponiveis = [];
             
@@ -1377,7 +1416,7 @@
             
             if (idsExistentes.length > 0) {
                 statusSpan.className = 'status-indicator status-invalido';
-                statusSpan.textContent = '❌ Alguns IDs já existem';
+                statusSpan.textContent = idsExistentes.length === 1 ? '❌ ID já existe' : '❌ Alguns IDs já existem';
                 
                 let mensagem = '';
                 if (idsExistentes.length > 0) {
@@ -1390,49 +1429,68 @@
                 mensagem += `<br><strong style="color: #ffc107;">O que deseja fazer?</strong>`;
                 
                 const modalMessage = document.getElementById('modalMessage');
-                modalMessage.innerHTML = mensagem;
-                document.getElementById('confirmModal').style.display = 'flex';
+                if (modalMessage) {
+                    modalMessage.innerHTML = mensagem;
+                }
+                
+                const confirmModal = document.getElementById('confirmModal');
+                if (confirmModal) {
+                    confirmModal.style.display = 'flex';
+                }
                 
                 dadosBanco = { idsExistentes, idsDisponiveis };
                 
             } else {
                 statusSpan.className = 'status-indicator status-valido';
-                statusSpan.textContent = '✅ Todos IDs disponíveis';
+                statusSpan.textContent = ids.length === 1 ? '✅ ID disponível' : '✅ Todos IDs disponíveis';
                 dadosBanco = null;
             }
         }
 
-        function confirmarAcao(acao) {
-            document.getElementById('confirmModal').style.display = 'none';
+        function validarMultiplosIds() {
+            verificarMultiplosIds();
+        }
+
+        async function confirmarAcao(acao) {
+            const confirmModal = document.getElementById('confirmModal');
+            if (confirmModal) {
+                confirmModal.style.display = 'none';
+            }
             
             if (acao === 'cancelar') {
                 dadosBanco = null;
                 return;
             }
             
+            if (!dadosBanco) return;
+            
+            const enderecoField = document.getElementById('enderecoAmpliacao');
+            const localizacaoField = document.getElementById('localizacaoAmpliacao');
+            const coordenadasField = document.getElementById('coordenadasAmpliacao');
+            const projetoField = document.getElementById('projetoAmpliacao');
+            const oltField = document.getElementById('oltAmpliacao');
+            
+            if (!enderecoField || !localizacaoField || !coordenadasField || !projetoField || !oltField) return;
+            
             const ids = processarMultiplosIds();
-            const endereco = document.getElementById('enderecoAmpliacao').value;
-            const localizacao = document.getElementById('localizacaoAmpliacao').value;
-            const coordenadas = document.getElementById('coordenadasAmpliacao').value;
-            const projeto = document.getElementById('projetoAmpliacao').value;
-            const olt = document.getElementById('oltAmpliacao').value;
-            const motivo = getMotivoFinal('ampliacao');
             
-            let textoCompleto = '';
-            let contador = 0;
-            
-            if (acao === 'manter' && dadosBanco) {
-                for (const id of dadosBanco.idsDisponiveis) {
+            if (acao === 'manter') {
+                const { idsExistentes, idsDisponiveis } = dadosBanco;
+                
+                let textoCompleto = '';
+                let contador = 0;
+                
+                for (const id of idsDisponiveis) {
                     const dados = {
                         id: id,
-                        endereco: endereco,
-                        coordenadas: coordenadas,
-                        localizacao: localizacao,
+                        endereco: enderecoField.value,
+                        coordenadas: coordenadasField.value,
+                        localizacao: localizacaoField.value,
                         quantidade: 1,
-                        projeto: projeto,
-                        olt: olt,
+                        projeto: projetoField.value,
+                        olt: oltField.value,
                         responsavel: usuarioAtual,
-                        motivo: motivo
+                        motivo: getMotivoFinal('ampliacao')
                     };
                     
                     textoCompleto += `Dados da Ampliação - ID: ${id}\n\n` +
@@ -1448,53 +1506,66 @@
                         `🆕 NOVA OS\n` +
                         `----------------------------------------\n\n`;
                     
-                    salvarAmpliacaoNoSheet(dados);
+                    await salvarAmpliacaoNoSheet(dados);
                     contador++;
                 }
                 
-                if (dadosBanco.idsExistentes.length > 0) {
-                    textoCompleto += `\n⚠️ OS IGNORADAS (já existentes): ${dadosBanco.idsExistentes.join(', ')}\n`;
+                if (idsExistentes.length > 0) {
+                    textoCompleto += `\n⚠️ OS IGNORADAS (já existentes): ${idsExistentes.join(', ')}\n`;
                 }
                 
-                navigator.clipboard.writeText(textoCompleto);
-                mostrarMensagem(`✅ ${contador} nova(s) OS gerada(s). ${dadosBanco.idsExistentes.length} ignorada(s) por já existirem.`, 'sucesso');
+                await navigator.clipboard.writeText(textoCompleto);
+                mostrarMensagem(`✅ ${contador} nova(s) OS gerada(s). ${idsExistentes.length} ignorada(s) por já existirem.`, 'sucesso');
+                
+                const statusSpan = document.getElementById('statusId');
+                if (statusSpan) {
+                    statusSpan.style.display = 'none';
+                }
             }
             
             if (acao === 'alterar') {
+                let textoCompleto = '';
+                let contador = 0;
+                
                 for (const id of ids) {
                     const dados = {
                         id: id,
-                        endereco: endereco,
-                        coordenadas: coordenadas,
-                        localizacao: localizacao,
+                        endereco: enderecoField.value,
+                        coordenadas: coordenadasField.value,
+                        localizacao: localizacaoField.value,
                         quantidade: 1,
-                        projeto: projeto,
-                        olt: olt,
+                        projeto: projetoField.value,
+                        olt: oltField.value,
                         responsavel: usuarioAtual,
-                        motivo: motivo
+                        motivo: getMotivoFinal('ampliacao')
                     };
                     
-                    const status = dadosBanco?.idsExistentes.includes(id) ? '✏️ SOBRESCRITA' : '🆕 NOVA';
+                    const status = dadosBanco.idsExistentes.includes(id) ? '✏️ SOBRESCRITA' : '🆕 NOVA';
                     
                     textoCompleto += `Dados da Ampliação - ID: ${id}\n\n` +
                         `ID: ${id}\n` +
-                        `Endereço: ${endereco}\n` +
-                        `Localização: ${localizacao}\n` +
-                        `Coordenadas: ${coordenadas}\n` +
+                        `Endereço: ${enderecoField.value}\n` +
+                        `Localização: ${localizacaoField.value}\n` +
+                        `Coordenadas: ${coordenadasField.value}\n` +
                         `Quantidade: 1\n` +
-                        `Projeto: ${projeto}\n` +
-                        `OLT: ${olt}\n` +
+                        `Projeto: ${projetoField.value}\n` +
+                        `OLT: ${oltField.value}\n` +
                         `Responsável: ${usuarioAtual}\n` +
-                        `Motivo: ${motivo}\n\n` +
+                        `Motivo: ${getMotivoFinal('ampliacao')}\n\n` +
                         `${status}\n` +
                         `----------------------------------------\n\n`;
                     
-                    salvarAmpliacaoNoSheet(dados);
+                    await salvarAmpliacaoNoSheet(dados);
                     contador++;
                 }
                 
-                navigator.clipboard.writeText(textoCompleto);
-                mostrarMensagem(`✅ ${contador} OS processadas (incluindo sobrescritas)!`, 'sucesso');
+                await navigator.clipboard.writeText(textoCompleto);
+                mostrarMensagem(`✅ ${contador} OS processadas (incluindo sobrescritas) e salvas na planilha!`, 'sucesso');
+                
+                const statusSpan = document.getElementById('statusId');
+                if (statusSpan) {
+                    statusSpan.style.display = 'none';
+                }
             }
             
             dadosBanco = null;
@@ -1507,9 +1578,12 @@
                 { id: `endereco${capitalize(tipo)}`, nome: 'Endereço' },
                 { id: `localizacao${capitalize(tipo)}`, nome: 'Localização' },
                 { id: `quantidade${capitalize(tipo)}`, nome: 'Quantidade' },
-                { id: `id${capitalize(tipo)}`, nome: 'ID(s)' },
                 { id: `projeto${capitalize(tipo)}`, nome: 'Projeto' }
             ];
+            
+            if (tipo === 'ampliacao') {
+                campos.push({ id: `id${capitalize(tipo)}`, nome: 'ID(s)' });
+            }
             
             const erros = [];
             
@@ -1527,7 +1601,8 @@
                 let valor = elemento.value.trim();
                 
                 if (campo.id.includes('quantidade')) {
-                    if (!valor || parseInt(valor) < 1) {
+                    const num = parseInt(valor);
+                    if (!valor || isNaN(num) || num < 1) {
                         erros.push(`${campo.nome} deve ser pelo menos 1`);
                         elemento.classList.add('invalido');
                     }
@@ -1541,17 +1616,26 @@
                         erros.push(`${campo.nome} não pode estar vazio`);
                         elemento.classList.add('invalido');
                     } else {
-                        const formatoValido = /^[A-Za-z0-9]+(?:,\s*[A-Za-z0-9]+)*$/.test(valor);
-                        if (!formatoValido) {
-                            erros.push(`Formato inválido! Use: ID1, ID2, ID3 (apenas vírgula e espaço)`);
+                        const ids = valor.split(',').map(id => id.trim()).filter(id => id);
+                        if (ids.length === 0) {
+                            erros.push(`Formato inválido! Use: ID1, ID2, ID3`);
                             elemento.classList.add('invalido');
                         } else {
-                            const ids = valor.split(',').map(id => id.trim());
-                            const quantidade = parseInt(document.getElementById('quantidadeAmpliacao').value) || 1;
+                            for (const id of ids) {
+                                if (!/^[A-Za-z0-9]+$/.test(id)) {
+                                    erros.push(`ID inválido: "${id}". Use apenas letras e números`);
+                                    elemento.classList.add('invalido');
+                                    break;
+                                }
+                            }
                             
-                            if (ids.length !== quantidade) {
-                                erros.push(`Número de IDs (${ids.length}) não corresponde à quantidade (${quantidade})`);
-                                elemento.classList.add('invalido');
+                            if (!elemento.classList.contains('invalido')) {
+                                const quantidadeField = document.getElementById('quantidadeAmpliacao');
+                                const quantidade = quantidadeField ? parseInt(quantidadeField.value) || 1 : 1;
+                                if (ids.length !== quantidade) {
+                                    erros.push(`Número de IDs (${ids.length}) não corresponde à quantidade (${quantidade})`);
+                                    elemento.classList.add('invalido');
+                                }
                             }
                         }
                     }
@@ -1566,16 +1650,18 @@
             const motivoSelect = document.getElementById(`motivoSelect${capitalize(tipo)}`);
             const motivoOutro = document.getElementById(`motivoOutro${capitalize(tipo)}`);
             
-            motivoSelect.classList.remove('invalido');
-            if (motivoOutro) motivoOutro.classList.remove('invalido');
-            
-            if (!motivoSelect.value) {
-                erros.push('Motivo deve ser selecionado');
-                motivoSelect.classList.add('invalido');
-            } else if (motivoSelect.value === 'Outro (especificar)') {
-                if (!motivoOutro.value.trim()) {
-                    erros.push('Por favor, especifique o motivo');
-                    motivoOutro.classList.add('invalido');
+            if (motivoSelect) {
+                motivoSelect.classList.remove('invalido');
+                if (motivoOutro) motivoOutro.classList.remove('invalido');
+                
+                if (!motivoSelect.value) {
+                    erros.push('Motivo deve ser selecionado');
+                    motivoSelect.classList.add('invalido');
+                } else if (motivoSelect.value === 'Outro (especificar)') {
+                    if (!motivoOutro.value.trim()) {
+                        erros.push('Por favor, especifique o motivo');
+                        motivoOutro.classList.add('invalido');
+                    }
                 }
             }
             
@@ -1584,6 +1670,8 @@
 
         function mostrarErros(erros) {
             const listaErros = document.getElementById('listaErros');
+            if (!listaErros) return;
+            
             listaErros.innerHTML = '';
             
             erros.forEach(erro => {
@@ -1592,11 +1680,17 @@
                 listaErros.appendChild(li);
             });
             
-            document.getElementById('errosModal').style.display = 'flex';
+            const errosModal = document.getElementById('errosModal');
+            if (errosModal) {
+                errosModal.style.display = 'flex';
+            }
         }
 
         function fecharErrosModal() {
-            document.getElementById('errosModal').style.display = 'none';
+            const errosModal = document.getElementById('errosModal');
+            if (errosModal) {
+                errosModal.style.display = 'none';
+            }
         }
 
         // FUNÇÕES PRINCIPAIS
@@ -1627,7 +1721,7 @@
             }
         }
 
-        function gerarTexto(tipo) {
+        async function gerarTexto(tipo) {
             const erros = validarCampos(tipo);
             
             if (erros.length > 0) {
@@ -1637,45 +1731,172 @@
 
             if (tipo === "implantacao") {
                 const motivo = getMotivoFinal('implantacao');
-                const idsTexto = document.getElementById("idImplantacao").value.trim();
-                const ids = idsTexto.split(',').map(id => id.trim()).filter(id => id);
-                const quantidade = parseInt(document.getElementById("quantidadeImplantacao").value) || 1;
+                const quantidadeField = document.getElementById("quantidadeImplantacao");
+                const enderecoField = document.getElementById("enderecoImplantacao");
+                const localizacaoField = document.getElementById("localizacaoImplantacao");
+                const coordenadasField = document.getElementById("coordenadasImplantacao");
+                const projetoField = document.getElementById("projetoImplantacao");
+                const oltField = document.getElementById("oltImplantacao");
+                
+                if (!quantidadeField || !enderecoField || !localizacaoField || !coordenadasField || !projetoField || !oltField) return;
+                
+                const quantidade = parseInt(quantidadeField.value) || 1;
+                
+                let texto = "";
+                texto += `Dados da Implantação\n\n`;
+                texto += `Endereço: ${enderecoField.value}\n\n`;
+                texto += `Localização: ${localizacaoField.value}\n\n`;
+                texto += `Coordenadas: ${coordenadasField.value}\n\n`;
+                texto += `Quantidade: ${quantidade}\n\n`;
+                texto += `Projeto: ${projetoField.value}\n\n`;
+                texto += `OLT: ${oltField.value}\n\n`;
+                texto += `Responsável: ${usuarioAtual}\n\n`;
+                texto += `Motivo: ${motivo}\n\n`;
+
+                await navigator.clipboard.writeText(texto);
+                mostrarMensagem(`✅ Script de implantação gerado com sucesso!`, 'sucesso');
+                
+            } else {
+                const ids = processarMultiplosIds();
+                const quantidadeField = document.getElementById('quantidadeAmpliacao');
+                
+                if (!quantidadeField) return;
+                
+                const quantidade = parseInt(quantidadeField.value) || 1;
                 
                 if (ids.length !== quantidade) {
                     mostrarMensagem(`⚠️ A quantidade (${quantidade}) deve ser igual ao número de IDs informados (${ids.length})`, 'atencao');
                     return;
                 }
-                
-                let textoCompleto = '';
-                
-                ids.forEach(id => {
-                    textoCompleto += `Dados da Implantação - ID: ${id}\n\n` +
-                        `Endereço: ${document.getElementById("enderecoImplantacao").value}\n` +
-                        `Localização: ${document.getElementById("localizacaoImplantacao").value}\n` +
-                        `Coordenadas: ${document.getElementById("coordenadasImplantacao").value}\n` +
-                        `Quantidade: 1\n` +
-                        `ID: ${id}\n` +
-                        `Projeto: ${document.getElementById("projetoImplantacao").value}\n` +
-                        `OLT: ${document.getElementById("oltImplantacao").value}\n` +
-                        `Responsável: ${usuarioAtual}\n` +
-                        `Motivo: ${motivo}\n\n` +
-                        `----------------------------------------\n\n`;
-                });
 
-                navigator.clipboard.writeText(textoCompleto);
-                mostrarMensagem(`✅ Script gerado com ${ids.length} OS de implantação!`, 'sucesso');
+                const statusSpan = document.getElementById('statusId');
+                if (statusSpan) {
+                    statusSpan.style.display = 'inline-block';
+                    statusSpan.className = 'status-indicator status-verificando';
+                    statusSpan.textContent = 'Verificando...';
+                }
                 
-            } else {
-                validarMultiplosIds();
+                const enderecoField = document.getElementById('enderecoAmpliacao');
+                const localizacaoField = document.getElementById('localizacaoAmpliacao');
+                const coordenadasField = document.getElementById('coordenadasAmpliacao');
+                const projetoField = document.getElementById('projetoAmpliacao');
+                const oltField = document.getElementById('oltAmpliacao');
+                
+                if (!enderecoField || !localizacaoField || !coordenadasField || !projetoField || !oltField) return;
+                
+                const endereco = enderecoField.value;
+                const localizacao = localizacaoField.value;
+                const coordenadas = coordenadasField.value;
+                const projeto = projetoField.value;
+                const olt = oltField.value;
+                const motivo = getMotivoFinal('ampliacao');
+                
+                let idsExistentes = [];
+                let idsDisponiveis = [];
+                
+                for (const id of ids) {
+                    try {
+                        const url = `${APPS_SCRIPT_URL}?action=verificar&id=${encodeURIComponent(id)}`;
+                        const response = await fetch(url);
+                        const data = await response.json();
+                        
+                        if (data.success && data.existe) {
+                            idsExistentes.push(id);
+                        } else {
+                            idsDisponiveis.push(id);
+                        }
+                    } catch (error) {
+                        console.error('Erro na verificação do ID', id, error);
+                    }
+                }
+                
+                if (idsExistentes.length > 0) {
+                    if (statusSpan) {
+                        statusSpan.className = 'status-indicator status-invalido';
+                        statusSpan.textContent = idsExistentes.length === 1 ? '❌ ID já existe' : '❌ Alguns IDs já existem';
+                    }
+                    
+                    let mensagem = '';
+                    if (idsExistentes.length > 0) {
+                        mensagem += `<strong style="color: #dc3545;">IDs já cadastrados:</strong> ${idsExistentes.join(', ')}<br>`;
+                    }
+                    if (idsDisponiveis.length > 0) {
+                        mensagem += `<strong style="color: #28a745;">IDs disponíveis:</strong> ${idsDisponiveis.join(', ')}<br>`;
+                    }
+                    
+                    mensagem += `<br><strong style="color: #ffc107;">O que deseja fazer?</strong>`;
+                    
+                    const modalMessage = document.getElementById('modalMessage');
+                    if (modalMessage) {
+                        modalMessage.innerHTML = mensagem;
+                    }
+                    
+                    const confirmModal = document.getElementById('confirmModal');
+                    if (confirmModal) {
+                        confirmModal.style.display = 'flex';
+                    }
+                    
+                    dadosBanco = { idsExistentes, idsDisponiveis, endereco, localizacao, coordenadas, projeto, olt, motivo };
+                    
+                } else {
+                    if (statusSpan) {
+                        statusSpan.className = 'status-indicator status-valido';
+                        statusSpan.textContent = ids.length === 1 ? '✅ ID disponível' : '✅ Todos IDs disponíveis';
+                    }
+                    
+                    let textoCompleto = '';
+                    
+                    for (const id of ids) {
+                        const dados = {
+                            id: id,
+                            endereco: endereco,
+                            coordenadas: coordenadas,
+                            localizacao: localizacao,
+                            quantidade: 1,
+                            projeto: projeto,
+                            olt: olt,
+                            responsavel: usuarioAtual,
+                            motivo: motivo
+                        };
+                        
+                        textoCompleto += `Dados da Ampliação - ID: ${id}\n\n` +
+                            `ID: ${id}\n` +
+                            `Endereço: ${dados.endereco}\n` +
+                            `Localização: ${dados.localizacao}\n` +
+                            `Coordenadas: ${dados.coordenadas}\n` +
+                            `Quantidade: 1\n` +
+                            `Projeto: ${dados.projeto}\n` +
+                            `OLT: ${dados.olt}\n` +
+                            `Responsável: ${dados.responsavel}\n` +
+                            `Motivo: ${dados.motivo}\n\n` +
+                            `🆕 NOVA OS\n` +
+                            `----------------------------------------\n\n`;
+                        
+                        await salvarAmpliacaoNoSheet(dados);
+                    }
+                    
+                    await navigator.clipboard.writeText(textoCompleto);
+                    mostrarMensagem(`✅ ${ids.length} nova(s) OS gerada(s) e salva(s) na planilha!`, 'sucesso');
+                    
+                    if (statusSpan) {
+                        setTimeout(() => {
+                            statusSpan.style.display = 'none';
+                        }, 3000);
+                    }
+                }
             }
         }
 
         function limparFormulario(tipo) {
             const form = document.getElementById(tipo);
-            form.reset();
+            if (form) {
+                form.reset();
+            }
             
             const oltField = document.getElementById(`olt${capitalize(tipo)}`);
-            if (oltField) oltField.value = "";
+            if (oltField) {
+                oltField.value = "";
+            }
 
             setAddressFieldsEditable(tipo, true); 
             setCoordenadasEditable(tipo, true);
@@ -1687,19 +1908,38 @@
             
             if (tipo === 'ampliacao') {
                 const statusSpan = document.getElementById('statusId');
-                statusSpan.style.display = 'none';
-                statusSpan.className = 'status-indicator';
+                if (statusSpan) {
+                    statusSpan.style.display = 'none';
+                    statusSpan.className = 'status-indicator';
+                }
                 dadosBanco = null;
+                
+                const idInfo = document.getElementById('idInfo');
+                if (idInfo) {
+                    idInfo.style.display = 'none';
+                }
             }
             
             if (tipo === 'implantacao') {
-                document.getElementById('motivoOutroImplantacao').style.display = 'none';
-                document.getElementById('motivoOutroImplantacao').value = '';
-                document.getElementById('motivoFinalImplantacao').value = '';
+                const motivoOutro = document.getElementById('motivoOutroImplantacao');
+                const motivoFinal = document.getElementById('motivoFinalImplantacao');
+                if (motivoOutro) {
+                    motivoOutro.style.display = 'none';
+                    motivoOutro.value = '';
+                }
+                if (motivoFinal) {
+                    motivoFinal.value = '';
+                }
             } else {
-                document.getElementById('motivoOutroAmpliacao').style.display = 'none';
-                document.getElementById('motivoOutroAmpliacao').value = '';
-                document.getElementById('motivoFinalAmpliacao').value = '';
+                const motivoOutro = document.getElementById('motivoOutroAmpliacao');
+                const motivoFinal = document.getElementById('motivoFinalAmpliacao');
+                if (motivoOutro) {
+                    motivoOutro.style.display = 'none';
+                    motivoOutro.value = '';
+                }
+                if (motivoFinal) {
+                    motivoFinal.value = '';
+                }
             }
             
             mostrarMensagem("Formulário limpo com sucesso!");
@@ -1707,6 +1947,8 @@
 
         function mostrarMensagem(texto, tipo = 'sucesso') {
             const msg = document.getElementById("mensagem");
+            if (!msg) return;
+            
             msg.textContent = texto;
 
             if (tipo === 'erro') {
