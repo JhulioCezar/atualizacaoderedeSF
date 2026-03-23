@@ -572,7 +572,13 @@
                     <input type="text" id="localizacaoImplantacao" class="link-field" onclick="abrirLink('implantacao')" readonly placeholder="Link aparecerá aqui após a busca">
 
                     <label>Quantidade:</label>
-                    <input type="number" id="quantidadeImplantacao" min="1" step="1" value="1">
+                    <input type="number" id="quantidadeImplantacao" min="1" step="1" value="1" onchange="validarQuantidadeImplantacao()" onkeyup="validarQuantidadeImplantacao()">
+
+                    <label>ID(s):</label>
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <input type="text" id="idImplantacao" onblur="validarQuantidadeImplantacao()" onkeyup="validarQuantidadeImplantacao()" placeholder="Ex: ID1, ID2, ID3" style="flex: 1;">
+                    </div>
+                    <div class="id-info" id="idInfoImplantacao"></div>
 
                     <label>Projeto:</label>
                     <select id="projetoImplantacao" onchange="atualizarOLT('implantacao')">
@@ -605,10 +611,11 @@
                     <div class="motivo-field">
                         <select id="motivoSelectImplantacao" onchange="atualizarMotivoImplantacao()">
                             <option value="">Selecione um motivo</option>
-                            <option>Atendimento de novos clientes na localidade</option>
-                            <option>Caixa lotada</option>
-                            <option>Mudança de endereço</option>
-                            <option>Outro (especificar)</option>
+                            <option>Caixa nova</option>
+                            <option>Atender novos clientes na localidade</option>
+                            <option>Atender mudança de endereço</option>
+                            <option>Caixa Lotada</option>
+                            <option>Outro</option>
                         </select>
                         <textarea id="motivoOutroImplantacao" style="margin-top: 10px; display: none;" placeholder="Digite o motivo específico..."></textarea>
                         <input type="text" id="motivoFinalImplantacao" style="display: none;">
@@ -680,10 +687,10 @@
                     <div class="motivo-field">
                         <select id="motivoSelectAmpliacao" onchange="atualizarMotivoAmpliacao()">
                             <option value="">Selecione um motivo</option>
-                            <option>Atendimento de novos clientes na localidade</option>
-                            <option>Caixa lotada</option>
-                            <option>Mudança de endereço</option>
-                            <option>Outro (especificar)</option>
+                            <option>Atender novos clientes na localidade</option>
+                            <option>Atender mudança de endereço</option>
+                            <option>Caixa Lotada</option>
+                            <option>Outro</option>
                         </select>
                         <textarea id="motivoOutroAmpliacao" style="margin-top: 10px; display: none;" placeholder="Digite o motivo específico..."></textarea>
                         <input type="text" id="motivoFinalAmpliacao" style="display: none;">
@@ -1029,6 +1036,60 @@
                 statusSpan.style.display = 'none';
                 statusSpan.className = 'status-indicator';
                 document.getElementById('idInfo').style.display = 'none';
+            } else if (type === 'implantacao') {
+                document.getElementById('idInfoImplantacao').style.display = 'none';
+                validarQuantidadeImplantacao();
+            }
+        }
+
+        // FUNÇÃO DE VALIDAÇÃO PARA IMPLANTAÇÃO
+        function validarQuantidadeImplantacao() {
+            const quantidadeField = document.getElementById('quantidadeImplantacao');
+            const idField = document.getElementById('idImplantacao');
+            const idInfo = document.getElementById('idInfoImplantacao');
+            
+            if (!quantidadeField || !idField || !idInfo) return;
+            
+            const quantidade = parseInt(quantidadeField.value) || 1;
+            const idsTexto = idField.value.trim();
+            
+            if (quantidade > 1) {
+                idInfo.textContent = "Para múltiplos IDs, separe por vírgula: ID1, ID2, ID3";
+                idInfo.style.display = 'block';
+                
+                if (idsTexto) {
+                    const ids = idsTexto.split(',').map(id => id.trim()).filter(id => id);
+                    if (ids.length !== quantidade) {
+                        mostrarMensagem(`⚠️ A quantidade (${quantidade}) deve ser igual ao número de IDs informados (${ids.length})`, 'atencao');
+                        idField.classList.add('invalido');
+                    } else {
+                        // Validar formato de cada ID
+                        let valido = true;
+                        for (const id of ids) {
+                            if (!/^[A-Za-z0-9]+$/.test(id)) {
+                                valido = false;
+                                break;
+                            }
+                        }
+                        if (!valido) {
+                            mostrarMensagem('Formato inválido! Use apenas: ID1, ID2, ID3 (separado por vírgula e espaço)', 'erro');
+                            idField.classList.add('invalido');
+                        } else {
+                            idField.classList.remove('invalido');
+                        }
+                    }
+                }
+            } else {
+                idInfo.style.display = 'none';
+                if (idsTexto) {
+                    // Validar formato para ID único
+                    if (!/^[A-Za-z0-9]+$/.test(idsTexto)) {
+                        mostrarMensagem('ID inválido! Use apenas letras e números, sem espaços', 'erro');
+                        idField.classList.add('invalido');
+                    } else {
+                        idField.classList.remove('invalido');
+                    }
+                }
             }
         }
 
@@ -1274,7 +1335,7 @@
             
             select.classList.remove('invalido');
             
-            if (select.value === 'Outro (especificar)') {
+            if (select.value === 'Outro') {
                 outroTextarea.style.display = 'block';
                 motivoFinal.value = '';
             } else {
@@ -1293,7 +1354,7 @@
             
             select.classList.remove('invalido');
             
-            if (select.value === 'Outro (especificar)') {
+            if (select.value === 'Outro') {
                 outroTextarea.style.display = 'block';
                 motivoFinal.value = '';
             } else {
@@ -1309,14 +1370,14 @@
             
             if (!select) return '';
             
-            if (select.value === 'Outro (especificar)') {
+            if (select.value === 'Outro') {
                 return outroTextarea ? outroTextarea.value.trim() || '' : '';
             } else {
                 return select.value || '';
             }
         }
 
-        // FUNÇÕES DE VALIDAÇÃO DE IDs
+        // FUNÇÕES DE VALIDAÇÃO DE IDs (Ampliação)
         function processarMultiplosIds() {
             const idsField = document.getElementById('idAmpliacao');
             if (!idsField) return [];
@@ -1583,6 +1644,8 @@
             
             if (tipo === 'ampliacao') {
                 campos.push({ id: `id${capitalize(tipo)}`, nome: 'ID(s)' });
+            } else {
+                campos.push({ id: `id${capitalize(tipo)}`, nome: 'ID(s)' });
             }
             
             const erros = [];
@@ -1611,28 +1674,35 @@
                         erros.push(`${campo.nome} deve ser selecionado`);
                         elemento.classList.add('invalido');
                     }
-                } else if (campo.id.includes('id') && tipo === 'ampliacao') {
+                } else if (campo.id.includes('id')) {
                     if (!valor) {
                         erros.push(`${campo.nome} não pode estar vazio`);
                         elemento.classList.add('invalido');
                     } else {
-                        const ids = valor.split(',').map(id => id.trim()).filter(id => id);
-                        if (ids.length === 0) {
-                            erros.push(`Formato inválido! Use: ID1, ID2, ID3`);
-                            elemento.classList.add('invalido');
-                        } else {
-                            for (const id of ids) {
-                                if (!/^[A-Za-z0-9]+$/.test(id)) {
-                                    erros.push(`ID inválido: "${id}". Use apenas letras e números`);
-                                    elemento.classList.add('invalido');
-                                    break;
-                                }
+                        const quantidade = parseInt(document.getElementById(`quantidade${capitalize(tipo)}`).value) || 1;
+                        
+                        if (quantidade === 1) {
+                            // Validar ID único
+                            if (!/^[A-Za-z0-9]+$/.test(valor)) {
+                                erros.push(`ID inválido! Use apenas letras e números, sem espaços`);
+                                elemento.classList.add('invalido');
                             }
-                            
-                            if (!elemento.classList.contains('invalido')) {
-                                const quantidadeField = document.getElementById('quantidadeAmpliacao');
-                                const quantidade = quantidadeField ? parseInt(quantidadeField.value) || 1 : 1;
-                                if (ids.length !== quantidade) {
+                        } else {
+                            // Validar múltiplos IDs
+                            const ids = valor.split(',').map(id => id.trim()).filter(id => id);
+                            if (ids.length === 0) {
+                                erros.push(`Formato inválido! Use: ID1, ID2, ID3`);
+                                elemento.classList.add('invalido');
+                            } else {
+                                for (const id of ids) {
+                                    if (!/^[A-Za-z0-9]+$/.test(id)) {
+                                        erros.push(`ID inválido: "${id}". Use apenas letras e números`);
+                                        elemento.classList.add('invalido');
+                                        break;
+                                    }
+                                }
+                                
+                                if (!elemento.classList.contains('invalido') && ids.length !== quantidade) {
                                     erros.push(`Número de IDs (${ids.length}) não corresponde à quantidade (${quantidade})`);
                                     elemento.classList.add('invalido');
                                 }
@@ -1657,7 +1727,7 @@
                 if (!motivoSelect.value) {
                     erros.push('Motivo deve ser selecionado');
                     motivoSelect.classList.add('invalido');
-                } else if (motivoSelect.value === 'Outro (especificar)') {
+                } else if (motivoSelect.value === 'Outro') {
                     if (!motivoOutro.value.trim()) {
                         erros.push('Por favor, especifique o motivo');
                         motivoOutro.classList.add('invalido');
@@ -1732,15 +1802,18 @@
             if (tipo === "implantacao") {
                 const motivo = getMotivoFinal('implantacao');
                 const quantidadeField = document.getElementById("quantidadeImplantacao");
+                const idField = document.getElementById("idImplantacao");
                 const enderecoField = document.getElementById("enderecoImplantacao");
                 const localizacaoField = document.getElementById("localizacaoImplantacao");
                 const coordenadasField = document.getElementById("coordenadasImplantacao");
                 const projetoField = document.getElementById("projetoImplantacao");
                 const oltField = document.getElementById("oltImplantacao");
                 
-                if (!quantidadeField || !enderecoField || !localizacaoField || !coordenadasField || !projetoField || !oltField) return;
+                if (!quantidadeField || !idField || !enderecoField || !localizacaoField || !coordenadasField || !projetoField || !oltField) return;
                 
                 const quantidade = parseInt(quantidadeField.value) || 1;
+                const idsTexto = idField.value.trim();
+                const ids = quantidade === 1 ? [idsTexto] : idsTexto.split(',').map(id => id.trim()).filter(id => id);
                 
                 let texto = "";
                 texto += `Dados da Implantação\n\n`;
@@ -1752,6 +1825,11 @@
                 texto += `OLT: ${oltField.value}\n\n`;
                 texto += `Responsável: ${usuarioAtual}\n\n`;
                 texto += `Motivo: ${motivo}\n\n`;
+                
+                for (const id of ids) {
+                    texto += `ID: ${id}\n`;
+                }
+                texto += `\n`;
 
                 await navigator.clipboard.writeText(texto);
                 mostrarMensagem(`✅ Script de implantação gerado com sucesso!`, 'sucesso');
@@ -1915,6 +1993,11 @@
                 dadosBanco = null;
                 
                 const idInfo = document.getElementById('idInfo');
+                if (idInfo) {
+                    idInfo.style.display = 'none';
+                }
+            } else if (tipo === 'implantacao') {
+                const idInfo = document.getElementById('idInfoImplantacao');
                 if (idInfo) {
                     idInfo.style.display = 'none';
                 }
