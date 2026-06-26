@@ -51,6 +51,8 @@
             margin-bottom: 30px;
             color: #fff;
             box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .header h1 {
@@ -65,13 +67,14 @@
             background: rgba(255, 255, 255, 0.15);
             padding: 8px 18px;
             border-radius: 30px;
+            flex-wrap: wrap;
         }
 
         .header .user-info span {
             font-weight: 600;
         }
 
-        .header .user-info button {
+        .header .user-info .btn-voltar {
             background: rgba(255, 255, 255, 0.2);
             border: none;
             color: #fff;
@@ -80,9 +83,11 @@
             cursor: pointer;
             font-size: 0.9em;
             transition: 0.2s;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        .header .user-info button:hover {
+        .header .user-info .btn-voltar:hover {
             background: rgba(255, 255, 255, 0.35);
         }
 
@@ -91,7 +96,7 @@
         ============================================ */
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -178,11 +183,13 @@
             font-weight: 600;
             color: #495057;
             border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
         }
 
         table td {
             padding: 10px 12px;
             border-bottom: 1px solid #f0f4f8;
+            vertical-align: middle;
         }
 
         table tr:hover td {
@@ -229,18 +236,35 @@
 
             .header {
                 flex-direction: column;
-                gap: 12px;
                 text-align: center;
+                padding: 15px 20px;
+            }
+
+            .header .user-info {
+                justify-content: center;
             }
 
             .cards {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .card .numero {
+                font-size: 1.8em;
             }
         }
 
         @media (max-width: 480px) {
             .cards {
                 grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.3em;
+            }
+
+            .container {
+                padding: 0;
             }
         }
 
@@ -278,19 +302,19 @@
             left: 50%;
             transform: translateX(-50%);
             color: #fff;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 8px;
             font-weight: bold;
             z-index: 1000;
-            animation: fadeInOut 3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: slideDown 0.4s ease;
+            text-align: center;
+            max-width: 90%;
         }
 
-        @keyframes fadeInOut {
-            0% { opacity: 0; top: -20px; }
-            10% { opacity: 1; top: 10px; }
-            90% { opacity: 1; top: 10px; }
-            100% { opacity: 0; top: -20px; }
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            100% { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
         .footer {
@@ -300,38 +324,34 @@
             font-size: 0.8em;
         }
 
-        .btn-voltar {
-            display: inline-block;
-            background: #6c757d;
-            color: #fff;
-            padding: 8px 20px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 0.9em;
-            transition: 0.2s;
-            border: none;
-            cursor: pointer;
+        /* ============================================
+           ERRO - SEM DADOS
+        ============================================ */
+        .sem-dados {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
         }
 
-        .btn-voltar:hover {
-            background: #5a6268;
+        .sem-dados .icone {
+            font-size: 3em;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <div id="mensagem" class="mensagem"></div>
+    <div id="mensagem"></div>
 
     <div class="container">
         <!-- HEADER -->
         <div class="header">
             <div>
                 <h1>📊 Dashboard de Chamados</h1>
-                <span style="font-size: 0.9em; opacity: 0.8;">Visão geral do sistema</span>
+                <span style="font-size: 0.9em; opacity: 0.8;">Visão geral do sistema de atualização de rede</span>
             </div>
             <div class="user-info">
                 <span id="usuarioLogado">Carregando...</span>
-                <button onclick="logout()">Sair</button>
-                <a href="javascript:void(0)" onclick="window.location.href='abertura-os.html'" class="btn-voltar" style="background: rgba(255,255,255,0.2); color: #fff;">← Voltar</a>
+                <a href="index.html" class="btn-voltar">← Voltar</a>
             </div>
         </div>
 
@@ -362,7 +382,7 @@
             <div class="panel">
                 <h3>👤 Chamados por Responsável</h3>
                 <div class="table-wrap">
-                    <table id="tabelaResponsaveis">
+                    <table>
                         <thead>
                             <tr><th>Responsável</th><th>Total</th><th>Concluídos</th><th>Taxa</th></tr>
                         </thead>
@@ -375,7 +395,7 @@
             <div class="panel">
                 <h3>📦 Chamados por Projeto</h3>
                 <div class="table-wrap">
-                    <table id="tabelaProjetos">
+                    <table>
                         <thead>
                             <tr><th>Projeto</th><th>Total</th><th>Concluídos</th><th>Pendentes</th></tr>
                         </thead>
@@ -415,7 +435,6 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pa2pleWJyaHlpY2NhcXJ0Y3dzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NzUxMDYsImV4cCI6MjA5NTU1MTEwNn0.OJOOyBCfqJl5HtYJfPFs-1LESN3e3vMdZthwNFGJ7xo';
 
         let supabaseClient = null;
-        let usuarioAtual = '';
         let chartStatus = null;
         let chartMes = null;
 
@@ -423,11 +442,21 @@
         // INICIALIZAÇÃO
         // ============================================
         window.addEventListener('DOMContentLoaded', function() {
-            if (typeof supabase !== 'undefined' && supabase.createClient) {
-                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                carregarDados();
-            } else {
-                mostrarMensagem('Erro ao carregar Supabase', 'erro');
+            try {
+                if (typeof supabase !== 'undefined' && supabase.createClient) {
+                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    console.log('✅ Supabase inicializado com sucesso');
+                    carregarDados();
+                } else {
+                    console.error('❌ Supabase não carregou corretamente');
+                    mostrarMensagem('Erro ao carregar Supabase. Recarregue a página.', 'erro');
+                    document.querySelectorAll('#corpoResponsaveis, #corpoProjetos, #corpoPendencias').forEach(el => {
+                        el.innerHTML = '<tr><td colspan="10" style="text-align:center; color:#dc3545;">❌ Erro ao conectar com o banco de dados</td></tr>';
+                    });
+                }
+            } catch (error) {
+                console.error('❌ Erro na inicialização:', error);
+                mostrarMensagem('Erro ao iniciar a aplicação', 'erro');
             }
         });
 
@@ -436,13 +465,24 @@
         // ============================================
         async function carregarDados() {
             try {
-                // Buscar resumo geral
+                console.log('🔄 Iniciando carregamento dos dados...');
+
+                // Verifica se o cliente Supabase está disponível
+                if (!supabaseClient) {
+                    throw new Error('Cliente Supabase não inicializado');
+                }
+
+                // ============================================
+                // 1. RESUMO GERAL
+                // ============================================
+                console.log('📊 Buscando resumo geral...');
                 const { data: resumo, error: errResumo } = await supabaseClient
                     .rpc('dashboard_resumo_geral');
 
-                if (errResumo) throw errResumo;
-
-                if (resumo && resumo.length > 0) {
+                if (errResumo) {
+                    console.error('❌ Erro no resumo geral:', errResumo);
+                    mostrarMensagem('Erro ao carregar resumo geral', 'erro');
+                } else if (resumo && resumo.length > 0) {
                     const r = resumo[0];
                     document.querySelector('.card.total .numero').textContent = r.total_chamados || 0;
                     document.querySelector('.card.concluidos .numero').textContent = r.total_concluidos || 0;
@@ -450,80 +490,132 @@
                     document.querySelector('.card.cancelados .numero').textContent = r.total_cancelados || 0;
                     document.querySelector('.card.responsaveis .numero').textContent = r.total_responsaveis || 0;
                     document.querySelector('.card.projetos .numero').textContent = r.total_projetos || 0;
+                    console.log('✅ Resumo geral carregado:', r);
+                } else {
+                    console.warn('⚠️ Nenhum dado de resumo encontrado');
+                    document.querySelectorAll('.card .numero').forEach(el => el.textContent = '0');
                 }
 
-                // Buscar status para gráfico
-                const { data: statusData } = await supabaseClient
+                // ============================================
+                // 2. STATUS PARA GRÁFICO
+                // ============================================
+                console.log('📊 Buscando dados de status...');
+                const { data: statusData, error: errStatus } = await supabaseClient
                     .rpc('dashboard_relatorio_status');
 
-                if (statusData) {
+                if (errStatus) {
+                    console.error('❌ Erro ao buscar status:', errStatus);
+                } else if (statusData && statusData.length > 0) {
                     const labels = statusData.map(s => s.status || 'Indefinido');
                     const values = statusData.map(s => parseInt(s.quantidade) || 0);
                     criarGraficoStatus(labels, values);
+                    console.log('✅ Status carregado:', statusData);
+                } else {
+                    console.warn('⚠️ Nenhum dado de status encontrado');
                 }
 
-                // Buscar meses para gráfico
-                const { data: mesData } = await supabaseClient
+                // ============================================
+                // 3. MESES PARA GRÁFICO
+                // ============================================
+                console.log('📊 Buscando dados por mês...');
+                const { data: mesData, error: errMes } = await supabaseClient
                     .rpc('dashboard_relatorio_mes');
 
-                if (mesData) {
-                    const labels = mesData.map(m => m.mes || '--/----');
-                    const values = mesData.map(m => parseInt(m.quantidade) || 0);
-                    criarGraficoMes(labels.reverse(), values.reverse());
+                if (errMes) {
+                    console.error('❌ Erro ao buscar meses:', errMes);
+                } else if (mesData && mesData.length > 0) {
+                    // Ordenar os meses corretamente (do mais antigo para o mais recente)
+                    const sorted = [...mesData].sort((a, b) => {
+                        const [mesA, anoA] = a.mes.split('/');
+                        const [mesB, anoB] = b.mes.split('/');
+                        return (parseInt(anoA) - parseInt(anoB)) || (parseInt(mesA) - parseInt(mesB));
+                    });
+                    const labels = sorted.map(m => m.mes || '--/----');
+                    const values = sorted.map(m => parseInt(m.quantidade) || 0);
+                    criarGraficoMes(labels, values);
+                    console.log('✅ Meses carregado:', mesData);
+                } else {
+                    console.warn('⚠️ Nenhum dado de meses encontrado');
                 }
 
-                // Buscar responsáveis
-                const { data: respData } = await supabaseClient
+                // ============================================
+                // 4. RESPONSÁVEIS
+                // ============================================
+                console.log('📊 Buscando dados por responsável...');
+                const { data: respData, error: errResp } = await supabaseClient
                     .rpc('dashboard_relatorio_responsavel');
 
-                if (respData) {
+                if (errResp) {
+                    console.error('❌ Erro ao buscar responsáveis:', errResp);
+                } else if (respData && respData.length > 0) {
                     const tbody = document.getElementById('corpoResponsaveis');
                     tbody.innerHTML = '';
-                    respData.slice(0, 15).forEach(r => {
+                    respData.slice(0, 20).forEach(r => {
                         const tr = document.createElement('tr');
+                        const taxa = parseFloat(r.taxa_conclusao) || 0;
                         tr.innerHTML = `
                             <td><strong>${r.responsavel || 'Não informado'}</strong></td>
-                            <td>${r.total_chamados}</td>
-                            <td>${r.total_concluidos}</td>
+                            <td>${r.total_chamados || 0}</td>
+                            <td>${r.total_concluidos || 0}</td>
                             <td>
-                                ${r.taxa_conclusao || 0}%
+                                ${taxa.toFixed(1)}%
                                 <div class="progress-bar">
-                                    <div class="fill" style="width: ${r.taxa_conclusao || 0}%;"></div>
+                                    <div class="fill" style="width: ${Math.min(taxa, 100)}%;"></div>
                                 </div>
                             </td>
                         `;
                         tbody.appendChild(tr);
                     });
+                    console.log('✅ Responsáveis carregado:', respData.length, 'registros');
+                } else {
+                    const tbody = document.getElementById('corpoResponsaveis');
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#6c757d;">Nenhum responsável encontrado</td></tr>';
+                    console.warn('⚠️ Nenhum dado de responsáveis encontrado');
                 }
 
-                // Buscar projetos
-                const { data: projData } = await supabaseClient
+                // ============================================
+                // 5. PROJETOS
+                // ============================================
+                console.log('📊 Buscando dados por projeto...');
+                const { data: projData, error: errProj } = await supabaseClient
                     .rpc('dashboard_relatorio_projeto');
 
-                if (projData) {
+                if (errProj) {
+                    console.error('❌ Erro ao buscar projetos:', errProj);
+                } else if (projData && projData.length > 0) {
                     const tbody = document.getElementById('corpoProjetos');
                     tbody.innerHTML = '';
-                    projData.slice(0, 15).forEach(p => {
+                    projData.slice(0, 20).forEach(p => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td><strong>${p.projeto || 'Não informado'}</strong></td>
-                            <td>${p.total_chamados}</td>
-                            <td>${p.total_concluidos}</td>
-                            <td>${p.total_pendentes}</td>
+                            <td>${p.total_chamados || 0}</td>
+                            <td>${p.total_concluidos || 0}</td>
+                            <td>${p.total_pendentes || 0}</td>
                         `;
                         tbody.appendChild(tr);
                     });
+                    console.log('✅ Projetos carregado:', projData.length, 'registros');
+                } else {
+                    const tbody = document.getElementById('corpoProjetos');
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#6c757d;">Nenhum projeto encontrado</td></tr>';
+                    console.warn('⚠️ Nenhum dado de projetos encontrado');
                 }
 
-                // Buscar pendências
-                const { data: pendData } = await supabaseClient
+                // ============================================
+                // 6. PENDÊNCIAS
+                // ============================================
+                console.log('📊 Buscando pendências...');
+                const { data: pendData, error: errPend } = await supabaseClient
                     .rpc('dashboard_relatorio_pendencias', { p_limite: 20 });
 
-                if (pendData) {
+                if (errPend) {
+                    console.error('❌ Erro ao buscar pendências:', errPend);
+                } else if (pendData) {
                     const tbody = document.getElementById('corpoPendencias');
                     tbody.innerHTML = '';
                     if (pendData.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#28a745;">✅ Nenhum chamado pendente!</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#28a745; font-weight:bold;">✅ Nenhum chamado pendente!</td></tr>';
                     } else {
                         pendData.forEach(p => {
                             const tr = document.createElement('tr');
@@ -540,14 +632,20 @@
                             `;
                             tbody.appendChild(tr);
                         });
+                        console.log('✅ Pendências carregado:', pendData.length, 'registros');
                     }
+                } else {
+                    const tbody = document.getElementById('corpoPendencias');
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#6c757d;">Nenhuma pendência encontrada</td></tr>';
                 }
 
                 mostrarMensagem('✅ Dados carregados com sucesso!', 'sucesso');
+                console.log('🎉 Todos os dados foram carregados com sucesso!');
 
             } catch (error) {
-                console.error('Erro ao carregar dados:', error);
-                mostrarMensagem('❌ Erro ao carregar dados', 'erro');
+                console.error('❌ Erro ao carregar dados:', error);
+                console.error('Detalhes do erro:', error.message || 'Erro desconhecido');
+                mostrarMensagem('❌ Erro ao carregar dados: ' + (error.message || 'Erro desconhecido'), 'erro');
             }
         }
 
@@ -585,7 +683,7 @@
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: { padding: 15, usePointStyle: true }
+                            labels: { padding: 15, usePointStyle: true, font: { size: 12 } }
                         }
                     }
                 }
@@ -619,6 +717,9 @@
                         y: {
                             beginAtZero: true,
                             ticks: { stepSize: 1 }
+                        },
+                        x: {
+                            ticks: { maxRotation: 45, font: { size: 10 } }
                         }
                     }
                 }
@@ -638,19 +739,14 @@
             msg.style.color = tipo === 'atencao' ? '#000' : '#fff';
             msg.style.display = 'block';
 
-            msg.style.animation = 'none';
-            void msg.offsetWidth;
-            msg.style.animation = 'fadeInOut 3s';
+            // Limpar timeout anterior se existir
+            if (window._timeoutMensagem) {
+                clearTimeout(window._timeoutMensagem);
+            }
 
-            setTimeout(() => { msg.style.display = 'none'; }, 3000);
-        }
-
-        // ============================================
-        // LOGOUT
-        // ============================================
-        function logout() {
-            // Redirecionar para a página de login
-            window.location.href = 'login.html';
+            window._timeoutMensagem = setTimeout(() => {
+                msg.style.display = 'none';
+            }, 4000);
         }
     </script>
 </body>
