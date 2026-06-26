@@ -603,18 +603,22 @@
                 }
 
                 // ============================================
-                // 6. PENDÊNCIAS
+                // 6. PENDÊNCIAS (CORRIGIDO - SEM PARÂMETROS)
                 // ============================================
                 console.log('📊 Buscando pendências...');
-                const { data: pendData, error: errPend } = await supabaseClient
-                    .rpc('dashboard_relatorio_pendencias', { p_limite: 20 });
+                try {
+                    const { data: pendData, error: errPend } = await supabaseClient
+                        .rpc('dashboard_relatorio_pendencias');
 
-                if (errPend) {
-                    console.error('❌ Erro ao buscar pendências:', errPend);
-                } else if (pendData) {
+                    if (errPend) {
+                        console.error('❌ Erro ao buscar pendências:', errPend);
+                        throw errPend;
+                    }
+
                     const tbody = document.getElementById('corpoPendencias');
                     tbody.innerHTML = '';
-                    if (pendData.length === 0) {
+                    
+                    if (!pendData || pendData.length === 0) {
                         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#28a745; font-weight:bold;">✅ Nenhum chamado pendente!</td></tr>';
                     } else {
                         pendData.forEach(p => {
@@ -634,9 +638,10 @@
                         });
                         console.log('✅ Pendências carregado:', pendData.length, 'registros');
                     }
-                } else {
+                } catch (error) {
+                    console.error('❌ Erro na seção de pendências:', error);
                     const tbody = document.getElementById('corpoPendencias');
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#6c757d;">Nenhuma pendência encontrada</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#dc3545;">❌ Erro ao carregar pendências</td></tr>';
                 }
 
                 mostrarMensagem('✅ Dados carregados com sucesso!', 'sucesso');
