@@ -86,7 +86,7 @@
             font-weight: 600;
         }
 
-        .header .user-info .btn-voltar {
+        .header .user-info .btn-header {
             background: rgba(255, 255, 255, 0.2);
             border: none;
             color: #fff;
@@ -99,8 +99,16 @@
             display: inline-block;
         }
 
-        .header .user-info .btn-voltar:hover {
+        .header .user-info .btn-header:hover {
             background: rgba(255, 255, 255, 0.35);
+        }
+
+        .header .user-info .btn-sair {
+            background: rgba(220, 53, 69, 0.6);
+        }
+
+        .header .user-info .btn-sair:hover {
+            background: rgba(220, 53, 69, 0.8);
         }
 
         /* ============================================
@@ -119,11 +127,14 @@
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
             text-align: center;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            position: relative;
         }
 
         .card:hover {
             transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
 
         .card .numero {
@@ -136,6 +147,18 @@
             font-size: 0.9em;
             color: #6c757d;
             margin-top: 4px;
+        }
+
+        .card .click-hint {
+            font-size: 0.7em;
+            color: #adb5bd;
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover .click-hint {
+            opacity: 1;
         }
 
         .card.total .numero { color: #007bff; }
@@ -239,6 +262,91 @@
         }
 
         /* ============================================
+           MODAL DE DETALHES
+        ============================================ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 900px;
+            width: 95%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-content .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f0f4f8;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-content .modal-header h2 {
+            font-size: 1.3em;
+            color: #343a40;
+            margin: 0;
+        }
+
+        .modal-content .modal-header .btn-fechar {
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: 0.2s;
+        }
+
+        .modal-content .modal-header .btn-fechar:hover {
+            background: #a71d2a;
+        }
+
+        .modal-content .modal-body .table-wrap {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .modal-content .sem-dados {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+
+        .modal-content .sem-dados .icone {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        /* ============================================
            RESPONSIVIDADE
         ============================================ */
         @media (max-width: 768px) {
@@ -273,6 +381,13 @@
             .card .numero {
                 font-size: 1.8em;
             }
+
+            .modal-content {
+                max-width: 100%;
+                width: 98%;
+                padding: 15px;
+                max-height: 90vh;
+            }
         }
 
         @media (max-width: 480px) {
@@ -294,30 +409,6 @@
         }
 
         /* ============================================
-           LOADING
-        ============================================ */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #6c757d;
-        }
-
-        .loading .spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #007bff;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* ============================================
            MENSAGEM FLUTUANTE
         ============================================ */
         #mensagem {
@@ -330,7 +421,7 @@
             padding: 12px 24px;
             border-radius: 8px;
             font-weight: bold;
-            z-index: 1000;
+            z-index: 2000;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             animation: slideDown 0.4s ease;
             text-align: center;
@@ -348,20 +439,6 @@
             color: #6c757d;
             font-size: 0.8em;
         }
-
-        /* ============================================
-           ERRO - SEM DADOS
-        ============================================ */
-        .sem-dados {
-            text-align: center;
-            padding: 30px;
-            color: #6c757d;
-        }
-
-        .sem-dados .icone {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
     </style>
 </head>
 <body>
@@ -373,34 +450,59 @@
             <div class="header-left">
                 <img src="https://i.imgur.com/dvzRyus.png" alt="Logomarca Sem Fronteiras" class="logo-header">
                 <div>
-                    <h1>📊 Dashboard de Chamados</h1>
+                    <h1>Dashboard de Chamados</h1>
                     <span style="font-size: 0.9em; opacity: 0.8;">Visão geral do sistema de atualização de rede</span>
                 </div>
             </div>
             <div class="user-info">
                 <span id="usuarioLogado"></span>
-                <a href="index.html" class="btn-voltar">← Voltar</a>
+                <a href="index.html?usuario=" class="btn-header" id="btnVoltar">← Voltar</a>
+                <button class="btn-header btn-sair" onclick="sair()">Sair</button>
             </div>
         </div>
 
         <!-- CARDS -->
         <div class="cards" id="cards">
-            <div class="card total"><div class="numero">-</div><div class="label">Total Chamados</div></div>
-            <div class="card concluidos"><div class="numero">-</div><div class="label">Concluídos</div></div>
-            <div class="card pendentes"><div class="numero">-</div><div class="label">Pendentes</div></div>
-            <div class="card cancelados"><div class="numero">-</div><div class="label">Cancelados</div></div>
-            <div class="card responsaveis"><div class="numero">-</div><div class="label">Responsáveis</div></div>
-            <div class="card projetos"><div class="numero">-</div><div class="label">Projetos</div></div>
+            <div class="card total" onclick="abrirModal('total')">
+                <div class="numero">-</div>
+                <div class="label">Total Chamados</div>
+                <div class="click-hint">🔍 Clique para ver todos</div>
+            </div>
+            <div class="card concluidos" onclick="abrirModal('concluidos')">
+                <div class="numero">-</div>
+                <div class="label">Concluídos</div>
+                <div class="click-hint">🔍 Clique para ver detalhes</div>
+            </div>
+            <div class="card pendentes" onclick="abrirModal('pendentes')">
+                <div class="numero">-</div>
+                <div class="label">Pendentes</div>
+                <div class="click-hint">🔍 Clique para ver detalhes</div>
+            </div>
+            <div class="card cancelados" onclick="abrirModal('cancelados')">
+                <div class="numero">-</div>
+                <div class="label">Cancelados</div>
+                <div class="click-hint">🔍 Clique para ver detalhes</div>
+            </div>
+            <div class="card responsaveis" onclick="abrirModal('responsaveis')">
+                <div class="numero">-</div>
+                <div class="label">Responsáveis</div>
+                <div class="click-hint">🔍 Clique para ver detalhes</div>
+            </div>
+            <div class="card projetos" onclick="abrirModal('projetos')">
+                <div class="numero">-</div>
+                <div class="label">Projetos</div>
+                <div class="click-hint">🔍 Clique para ver detalhes</div>
+            </div>
         </div>
 
         <!-- GRÁFICOS -->
         <div class="row">
             <div class="panel">
-                <h3>📈 Chamados por Status</h3>
+                <h3>Chamados por Status</h3>
                 <canvas id="chartStatus"></canvas>
             </div>
             <div class="panel">
-                <h3>📅 Chamados por Mês</h3>
+                <h3>Chamados por Mês</h3>
                 <canvas id="chartMes"></canvas>
             </div>
         </div>
@@ -408,7 +510,7 @@
         <!-- RESPONSÁVEIS E PROJETOS -->
         <div class="row">
             <div class="panel">
-                <h3>👤 Chamados por Responsável</h3>
+                <h3>Chamados por Responsável</h3>
                 <div class="table-wrap">
                     <table>
                         <thead>
@@ -421,7 +523,7 @@
                 </div>
             </div>
             <div class="panel">
-                <h3>📦 Chamados por Projeto</h3>
+                <h3>Chamados por Projeto</h3>
                 <div class="table-wrap">
                     <table>
                         <thead>
@@ -437,7 +539,7 @@
 
         <!-- PENDÊNCIAS -->
         <div class="panel">
-            <h3>⏳ Chamados Pendentes</h3>
+            <h3>Chamados Pendentes</h3>
             <div class="table-wrap">
                 <table>
                     <thead>
@@ -455,6 +557,24 @@
         </div>
     </div>
 
+    <!-- MODAL DE DETALHES -->
+    <div id="modalDetalhes" class="modal-overlay" onclick="fecharModalExterno(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalTitulo">Detalhes</h2>
+                <button class="btn-fechar" onclick="fecharModal()">✕ Fechar</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <div class="table-wrap">
+                    <table>
+                        <thead id="modalThead"></thead>
+                        <tbody id="modalTbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ============================================
         // CARREGAR NOME DO USUÁRIO DA URL
@@ -464,12 +584,144 @@
             const usuario = urlParams.get('usuario');
             
             const el = document.getElementById('usuarioLogado');
+            const btnVoltar = document.getElementById('btnVoltar');
+            
             if (usuario) {
                 el.textContent = `👤 ${usuario}`;
+                btnVoltar.href = `index.html?usuario=${encodeURIComponent(usuario)}`;
             } else {
-                el.textContent = '📊 Dashboard';
+                el.textContent = 'Dashboard';
+                btnVoltar.href = 'index.html';
             }
         }
+
+        // ============================================
+        // FUNÇÕES DE LOGOUT
+        // ============================================
+        function sair() {
+            window.location.href = 'index.html';
+        }
+
+        // ============================================
+        // FUNÇÕES DO MODAL
+        // ============================================
+        let modalDados = {};
+
+        function abrirModal(tipo) {
+            const modal = document.getElementById('modalDetalhes');
+            const titulo = document.getElementById('modalTitulo');
+            const thead = document.getElementById('modalThead');
+            const tbody = document.getElementById('modalTbody');
+
+            let dados = modalDados[tipo];
+            if (!dados) {
+                mostrarMensagem('Dados ainda não carregados. Aguarde...', 'atencao');
+                return;
+            }
+
+            tbody.innerHTML = '';
+            thead.innerHTML = '';
+
+            switch(tipo) {
+                case 'total':
+                case 'concluidos':
+                case 'pendentes':
+                case 'cancelados':
+                    titulo.textContent = tipo === 'total' ? 'Todos os Chamados' : 
+                                         tipo === 'concluidos' ? 'Chamados Concluídos' :
+                                         tipo === 'pendentes' ? 'Chamados Pendentes' : 'Chamados Cancelados';
+                    thead.innerHTML = `<tr><th>ID</th><th>Endereço</th><th>Responsável</th><th>Projeto</th><th>Status</th><th>Data</th></tr>`;
+                    
+                    if (dados.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="6" class="sem-dados">Nenhum registro encontrado</td></tr>`;
+                    } else {
+                        dados.forEach(item => {
+                            const badgeClass = item.status === 'concluido' ? 'concluido' :
+                                              item.status === 'cancelado' ? 'cancelado' :
+                                              item.status === 'pendente' ? 'pendente' : 'outro';
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td><code>${item.id_cto || '-'}</code></td>
+                                <td>${item.endereco ? item.endereco.substring(0, 50) + (item.endereco.length > 50 ? '...' : '') : '-'}</td>
+                                <td>${item.responsavel || '-'}</td>
+                                <td>${item.projeto || '-'}</td>
+                                <td><span class="badge ${badgeClass}">${item.status || 'Indefinido'}</span></td>
+                                <td>${item.data_criacao ? new Date(item.data_criacao).toLocaleDateString('pt-BR') : '-'}</td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                    break;
+
+                case 'responsaveis':
+                    titulo.textContent = 'Lista de Responsáveis';
+                    thead.innerHTML = `<tr><th>Responsável</th><th>Total</th><th>Concluídos</th><th>Pendentes</th><th>Taxa</th></tr>`;
+                    
+                    if (dados.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="5" class="sem-dados">Nenhum responsável encontrado</td></tr>`;
+                    } else {
+                        dados.forEach(item => {
+                            const tr = document.createElement('tr');
+                            const taxa = parseFloat(item.taxa_conclusao) || 0;
+                            tr.innerHTML = `
+                                <td><strong>${item.responsavel || 'Não informado'}</strong></td>
+                                <td>${item.total_chamados || 0}</td>
+                                <td>${item.total_concluidos || 0}</td>
+                                <td>${(item.total_chamados || 0) - (item.total_concluidos || 0)}</td>
+                                <td>
+                                    ${taxa.toFixed(1)}%
+                                    <div class="progress-bar">
+                                        <div class="fill" style="width: ${Math.min(taxa, 100)}%;"></div>
+                                    </div>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                    break;
+
+                case 'projetos':
+                    titulo.textContent = 'Lista de Projetos';
+                    thead.innerHTML = `<tr><th>Projeto</th><th>Total</th><th>Concluídos</th><th>Pendentes</th></tr>`;
+                    
+                    if (dados.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="4" class="sem-dados">Nenhum projeto encontrado</td></tr>`;
+                    } else {
+                        dados.forEach(item => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td><strong>${item.projeto || 'Não informado'}</strong></td>
+                                <td>${item.total_chamados || 0}</td>
+                                <td>${item.total_concluidos || 0}</td>
+                                <td>${item.total_pendentes || 0}</td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                    break;
+            }
+
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalDetalhes').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function fecharModalExterno(event) {
+            if (event.target === document.getElementById('modalDetalhes')) {
+                fecharModal();
+            }
+        }
+
+        // Fechar com ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                fecharModal();
+            }
+        });
 
         // ============================================
         // CONFIGURAÇÃO SUPABASE
@@ -480,6 +732,7 @@
         let supabaseClient = null;
         let chartStatus = null;
         let chartMes = null;
+        let todosChamados = [];
 
         // ============================================
         // INICIALIZAÇÃO
@@ -512,13 +765,23 @@
             try {
                 console.log('🔄 Iniciando carregamento dos dados...');
 
-                // Verifica se o cliente Supabase está disponível
                 if (!supabaseClient) {
                     throw new Error('Cliente Supabase não inicializado');
                 }
 
                 // ============================================
-                // 1. RESUMO GERAL
+                // 1. BUSCAR TODOS OS CHAMADOS PARA OS MODAIS
+                // ============================================
+                const { data: todos, error: errTodos } = await supabaseClient
+                    .from('chamados')
+                    .select('id_cto, endereco, responsavel, projeto, status, data_criacao');
+
+                if (!errTodos && todos) {
+                    todosChamados = todos;
+                }
+
+                // ============================================
+                // 2. RESUMO GERAL
                 // ============================================
                 console.log('📊 Buscando resumo geral...');
                 const { data: resumo, error: errResumo } = await supabaseClient
@@ -536,13 +799,21 @@
                     document.querySelector('.card.responsaveis .numero').textContent = r.total_responsaveis || 0;
                     document.querySelector('.card.projetos .numero').textContent = r.total_projetos || 0;
                     console.log('✅ Resumo geral carregado:', r);
+                    
+                    // Salvar dados para os modais
+                    if (todosChamados.length > 0) {
+                        modalDados.total = todosChamados;
+                        modalDados.concluidos = todosChamados.filter(c => c.status === 'concluido');
+                        modalDados.pendentes = todosChamados.filter(c => c.status !== 'concluido' && c.status !== 'cancelado');
+                        modalDados.cancelados = todosChamados.filter(c => c.status === 'cancelado');
+                    }
                 } else {
                     console.warn('⚠️ Nenhum dado de resumo encontrado');
                     document.querySelectorAll('.card .numero').forEach(el => el.textContent = '0');
                 }
 
                 // ============================================
-                // 2. STATUS PARA GRÁFICO
+                // 3. STATUS PARA GRÁFICO
                 // ============================================
                 console.log('📊 Buscando dados de status...');
                 const { data: statusData, error: errStatus } = await supabaseClient
@@ -560,7 +831,7 @@
                 }
 
                 // ============================================
-                // 3. MESES PARA GRÁFICO
+                // 4. MESES PARA GRÁFICO
                 // ============================================
                 console.log('📊 Buscando dados por mês...');
                 const { data: mesData, error: errMes } = await supabaseClient
@@ -569,7 +840,6 @@
                 if (errMes) {
                     console.error('❌ Erro ao buscar meses:', errMes);
                 } else if (mesData && mesData.length > 0) {
-                    // Ordenar os meses corretamente (do mais antigo para o mais recente)
                     const sorted = [...mesData].sort((a, b) => {
                         const [mesA, anoA] = a.mes.split('/');
                         const [mesB, anoB] = b.mes.split('/');
@@ -584,7 +854,7 @@
                 }
 
                 // ============================================
-                // 4. RESPONSÁVEIS
+                // 5. RESPONSÁVEIS
                 // ============================================
                 console.log('📊 Buscando dados por responsável...');
                 const { data: respData, error: errResp } = await supabaseClient
@@ -593,6 +863,8 @@
                 if (errResp) {
                     console.error('❌ Erro ao buscar responsáveis:', errResp);
                 } else if (respData && respData.length > 0) {
+                    modalDados.responsaveis = respData;
+                    
                     const tbody = document.getElementById('corpoResponsaveis');
                     tbody.innerHTML = '';
                     respData.slice(0, 20).forEach(r => {
@@ -613,13 +885,14 @@
                     });
                     console.log('✅ Responsáveis carregado:', respData.length, 'registros');
                 } else {
+                    modalDados.responsaveis = [];
                     const tbody = document.getElementById('corpoResponsaveis');
                     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#6c757d;">Nenhum responsável encontrado</td></tr>';
                     console.warn('⚠️ Nenhum dado de responsáveis encontrado');
                 }
 
                 // ============================================
-                // 5. PROJETOS
+                // 6. PROJETOS
                 // ============================================
                 console.log('📊 Buscando dados por projeto...');
                 const { data: projData, error: errProj } = await supabaseClient
@@ -628,6 +901,8 @@
                 if (errProj) {
                     console.error('❌ Erro ao buscar projetos:', errProj);
                 } else if (projData && projData.length > 0) {
+                    modalDados.projetos = projData;
+                    
                     const tbody = document.getElementById('corpoProjetos');
                     tbody.innerHTML = '';
                     projData.slice(0, 20).forEach(p => {
@@ -642,13 +917,14 @@
                     });
                     console.log('✅ Projetos carregado:', projData.length, 'registros');
                 } else {
+                    modalDados.projetos = [];
                     const tbody = document.getElementById('corpoProjetos');
                     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#6c757d;">Nenhum projeto encontrado</td></tr>';
                     console.warn('⚠️ Nenhum dado de projetos encontrado');
                 }
 
                 // ============================================
-                // 6. PENDÊNCIAS
+                // 7. PENDÊNCIAS
                 // ============================================
                 console.log('📊 Buscando pendências...');
                 try {
@@ -789,7 +1065,6 @@
             msg.style.color = tipo === 'atencao' ? '#000' : '#fff';
             msg.style.display = 'block';
 
-            // Limpar timeout anterior se existir
             if (window._timeoutMensagem) {
                 clearTimeout(window._timeoutMensagem);
             }
