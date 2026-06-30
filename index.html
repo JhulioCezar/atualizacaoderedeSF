@@ -53,6 +53,7 @@
         .usuario-logado{position:absolute;top:25px;right:25px;background:#e9ecef;padding:8px 15px;border-radius:20px;font-size:0.9em;font-weight:bold;color:#007bff;display:flex;align-items:center;gap:10px;z-index:100}
         .usuario-logado button{margin:0;padding:4px 10px;font-size:0.8em;background-color:#6c757d}
         .usuario-logado button:hover{background-color:#5a6268}
+        .usuario-logado a{color:#007bff;text-decoration:none;font-size:1.2em}
         .logo{display:block;width:80%;max-width:350px;margin:0 auto 10px}
         h2{text-align:center;margin-bottom:0;font-size:1.5em}
         h3{margin-top:5px;margin-bottom:15px;color:#555;font-size:1.2em}
@@ -188,6 +189,7 @@
         <div id="sistema-screen" class="hidden">
             <div class="usuario-logado">
                 <span id="usuarioLogadoNome"></span>
+                <a href="dashboard.html?usuario=" title="Dashboard">📊</a>
                 <button onclick="fazerLogout()">Sair</button>
             </div>
             
@@ -550,6 +552,13 @@
                     document.getElementById('login-screen').classList.add('hidden');
                     document.getElementById('sistema-screen').classList.remove('hidden');
                     document.getElementById('usuarioLogadoNome').textContent = usuarioAtual;
+                    
+                    // Atualizar o link da dashboard com o nome do usuário
+                    const linkDashboard = document.querySelector('.usuario-logado a');
+                    if (linkDashboard) {
+                        linkDashboard.href = `dashboard.html?usuario=${encodeURIComponent(usuarioAtual)}`;
+                    }
+                    
                     mostrarMensagem(`Bem-vindo, ${usuarioAtual}!`, 'sucesso');
                 } else {
                     mostrarMensagemLogin('Senha incorreta!', 'erro');
@@ -1524,8 +1533,9 @@
                 const coordenadasField = document.getElementById('coordenadasAmpliacao');
                 const projetoField = document.getElementById('projetoAmpliacao');
                 const oltField = document.getElementById('oltAmpliacao');
+                const idField = document.getElementById('idAmpliacao');
                 
-                if (!enderecoField || !localizacaoField || !coordenadasField || !projetoField || !oltField) return;
+                if (!enderecoField || !localizacaoField || !coordenadasField || !projetoField || !oltField || !idField) return;
                 
                 const endereco = enderecoField.value;
                 const localizacao = localizacaoField.value;
@@ -1533,6 +1543,16 @@
                 const projeto = projetoField.value;
                 const olt = oltField.value;
                 const motivo = getMotivoFinal('ampliacao');
+                const idsTexto = idField.value.trim();
+                
+                // Formatar IDs em uma única linha (separados por vírgula e espaço)
+                let idsFormatados = '';
+                if (quantidade === 1) {
+                    idsFormatados = idsTexto;
+                } else {
+                    const idsList = idsTexto.split(',').map(id => id.trim()).filter(id => id);
+                    idsFormatados = idsList.join(', ');
+                }
                 
                 let idsExistentes = [];
                 let idsDisponiveis = [];
@@ -1589,62 +1609,58 @@
                         confirmModal.style.display = 'flex';
                     }
                     
-                    dadosBanco = { idsExistentes, idsDisponiveis, detalhes, endereco, localizacao, coordenadas, projeto, olt, motivo };
-                    
-                } else {
-                    if (statusSpan) {
-                        statusSpan.className = 'status-indicator status-valido';
-                        statusSpan.textContent = ids.length === 1 ? '✅ ID disponível' : '✅ Todos IDs disponíveis';
-                    }
-                    
-                    const idsFormatados = ids.join(', ');
-                    
-                    let textoCompleto = `Dados da Ampliação\n\n` +
-                        `Endereço: ${endereco}\n\n` +
-                        `Localização: ${localizacao}\n\n` +
-                        `Coordenadas: ${coordenadas}\n\n` +
-                        `Quantidade: ${quantidade}\n\n` +
-                        `ID(s): ${idsFormatados}\n\n` +
-                        `Projeto: ${projeto}\n\n` +
-                        `OLT: ${olt}\n\n` +
-                        `Responsável: ${usuarioAtual}\n\n` +
-                        `Motivo: ${motivo}\n\n` +
-                        `----------------------------------------\n\n`;
-                    
-                    let salvos = 0;
-                    for (const id of ids) {
-                        try {
-                            const { data, error } = await supabaseClient
-                                .rpc('criar_atualizacao_rede', {
-                                    p_id_cto: id,
-                                    p_endereco: endereco,
-                                    p_coordenadas: coordenadas,
-                                    p_localizacao: localizacao,
-                                    p_projeto: projeto,
-                                    p_olt: olt,
-                                    p_responsavel: usuarioAtual,
-                                    p_motivo: motivo,
-                                    p_data_execucao: new Date().toISOString()
-                                });
-                            
-                            if (!error) {
-                                salvos++;
-                            } else {
-                                console.error('Erro ao salvar ID', id, error);
-                            }
-                        } catch (error) {
+                    dadosBanco = { idsExistentes, idsDisponiveis, detalhes, endereco, localizacao, coordenadas, projeto, olt, motivo, idsFormatados, quantidade };
+                    return;
+                }
+                
+                // TEXTO ÚNICO COM TODOS OS IDs EM SEQUÊNCIA
+                let texto = "Dados da Ampliação\n\n";
+                texto += `Endereço: ${endereco}\n\n`;
+                texto += `Localização: ${localizacao}\n\n`;
+                texto += `Coordenadas: ${coordenadas}\n\n`;
+                texto += `Quantidade: ${quantidade}\n\n`;
+                texto += `ID(s): ${idsFormatados}\n\n`;
+                texto += `Projeto: ${projeto}\n\n`;
+                texto += `OLT: ${olt}\n\n`;
+                texto += `Responsável: ${usuarioAtual}\n\n`;
+                texto += `Motivo: ${motivo}\n\n`;
+                
+                // Salvar cada ID individualmente no banco
+                let salvos = 0;
+                for (const id of ids) {
+                    try {
+                        const { data, error } = await supabaseClient
+                            .rpc('criar_atualizacao_rede', {
+                                p_id_cto: id,
+                                p_endereco: endereco,
+                                p_coordenadas: coordenadas,
+                                p_localizacao: localizacao,
+                                p_projeto: projeto,
+                                p_olt: olt,
+                                p_responsavel: usuarioAtual,
+                                p_motivo: motivo,
+                                p_data_execucao: new Date().toISOString()
+                            });
+                        
+                        if (!error) {
+                            salvos++;
+                        } else {
                             console.error('Erro ao salvar ID', id, error);
                         }
+                    } catch (error) {
+                        console.error('Erro ao salvar ID', id, error);
                     }
-                    
-                    await navigator.clipboard.writeText(textoCompleto);
-                    mostrarMensagem(`✅ ${salvos} OS de ampliação salva(s) com sucesso!`, 'sucesso');
-                    
-                    if (statusSpan) {
-                        setTimeout(() => {
-                            statusSpan.style.display = 'none';
-                        }, 3000);
-                    }
+                }
+                
+                await navigator.clipboard.writeText(texto);
+                mostrarMensagem(`✅ ${salvos} OS de ampliação salva(s) com sucesso!`, 'sucesso');
+                
+                if (statusSpan) {
+                    statusSpan.className = 'status-indicator status-valido';
+                    statusSpan.textContent = ids.length === 1 ? '✅ ID disponível' : '✅ Todos IDs disponíveis';
+                    setTimeout(() => {
+                        statusSpan.style.display = 'none';
+                    }, 3000);
                 }
             }
         }
