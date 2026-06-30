@@ -53,7 +53,8 @@
         .usuario-logado{position:absolute;top:25px;right:25px;background:#e9ecef;padding:8px 15px;border-radius:20px;font-size:0.9em;font-weight:bold;color:#007bff;display:flex;align-items:center;gap:10px;z-index:100}
         .usuario-logado button{margin:0;padding:4px 10px;font-size:0.8em;background-color:#6c757d}
         .usuario-logado button:hover{background-color:#5a6268}
-        .usuario-logado a{color:#007bff;text-decoration:none;font-size:1.2em}
+        .usuario-logado .btn-dashboard{background:#28a745;color:#fff;padding:5px 16px;border-radius:20px;text-decoration:none;font-size:0.85em;font-weight:600;transition:0.2s;display:inline-flex;align-items:center;gap:6px}
+        .usuario-logado .btn-dashboard:hover{background:#1e7e34;color:#fff}
         .logo{display:block;width:80%;max-width:350px;margin:0 auto 10px}
         h2{text-align:center;margin-bottom:0;font-size:1.5em}
         h3{margin-top:5px;margin-bottom:15px;color:#555;font-size:1.2em}
@@ -99,9 +100,14 @@
         .erros-lista{text-align:left;margin:10px 0;padding-left:20px;color:#dc3545}
         .erros-lista li{margin:5px 0}
         .motivo-field{margin-top:15px}
+        .status-field{margin-top:15px}
+        .status-field .status-opcao{margin:8px 0}
+        .status-field .status-opcao label{font-weight:normal;margin-top:5px;cursor:pointer}
+        .status-field .status-opcao input[type="radio"]{width:auto;margin-right:8px;vertical-align:middle}
+        .status-field .status-opcao textarea{margin-top:8px}
         #home-buttons{margin-top:30px;display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
         #home-buttons button{width:45%;padding:20px;font-size:1.2em;min-width:150px}
-        @media (max-width:500px){.container{padding:15px}.back-button{position:static;display:block;width:100%;margin:0 0 15px 0}#form-screen .logo-header{margin-top:15px}.input-group{flex-wrap:wrap}.input-group input{width:100%;flex-basis:100%;margin-bottom:5px;margin-right:0}.input-group button{flex-basis:48%;height:auto;padding:8px;margin-right:0}.usuario-logado{position:static;margin-bottom:15px;justify-content:center}.login-footer{flex-direction:column;align-items:center}#home-buttons button{width:100%}}
+        @media (max-width:500px){.container{padding:15px}.back-button{position:static;display:block;width:100%;margin:0 0 15px 0}#form-screen .logo-header{margin-top:15px}.input-group{flex-wrap:wrap}.input-group input{width:100%;flex-basis:100%;margin-bottom:5px;margin-right:0}.input-group button{flex-basis:48%;height:auto;padding:8px;margin-right:0}.usuario-logado{position:static;margin-bottom:15px;justify-content:center;flex-wrap:wrap}.login-footer{flex-direction:column;align-items:center}#home-buttons button{width:100%}}
     </style>
 </head>
 <body>
@@ -189,7 +195,7 @@
         <div id="sistema-screen" class="hidden">
             <div class="usuario-logado">
                 <span id="usuarioLogadoNome"></span>
-                <a href="dashboard.html?usuario=" title="Dashboard">📊</a>
+                <a href="dashboard.html?usuario=" class="btn-dashboard" title="Dashboard">📊 Dashboard</a>
                 <button onclick="fazerLogout()">Sair</button>
             </div>
             
@@ -353,6 +359,25 @@
                         <input type="text" id="motivoFinalAmpliacao" style="display: none;">
                     </div>
 
+                    <!-- CAMPO: STATUS DA EXECUÇÃO -->
+                    <div class="status-field">
+                        <label>Status da execução:</label>
+                        <div class="status-opcao">
+                            <input type="radio" name="statusExecucao" value="concluido" id="statusConcluido" checked onchange="mostrarMotivoStatus('concluido')">
+                            <label for="statusConcluido">✅ Executada com sucesso</label>
+                        </div>
+                        <div class="status-opcao">
+                            <input type="radio" name="statusExecucao" value="cancelado" id="statusCancelado" onchange="mostrarMotivoStatus('cancelado')">
+                            <label for="statusCancelado">❌ Cancelada</label>
+                            <textarea id="motivoCancelado" style="display:none;margin-top:8px;" rows="2" placeholder="Digite o motivo do cancelamento..."></textarea>
+                        </div>
+                        <div class="status-opcao">
+                            <input type="radio" name="statusExecucao" value="pendente" id="statusPendente" onchange="mostrarMotivoStatus('pendente')">
+                            <label for="statusPendente">⏳ Pendenciada</label>
+                            <textarea id="motivoPendente" style="display:none;margin-top:8px;" rows="2" placeholder="Digite o motivo da pendência..."></textarea>
+                        </div>
+                    </div>
+
                     <div class="action-buttons">
                         <button type="button" onclick="gerarTexto('ampliacao')" id="btnGerarAmpliacao">Gerar</button>
                         <button type="button" class="validar" onclick="validarMultiplosIds()">Validar IDs</button>
@@ -481,6 +506,48 @@
         }
 
         // ============================================
+        // FUNÇÃO: mostrarMotivoStatus
+        // ============================================
+        function mostrarMotivoStatus(tipo) {
+            const motivoCancelado = document.getElementById('motivoCancelado');
+            const motivoPendente = document.getElementById('motivoPendente');
+            
+            if (tipo === 'concluido') {
+                motivoCancelado.style.display = 'none';
+                motivoPendente.style.display = 'none';
+            } else if (tipo === 'cancelado') {
+                motivoCancelado.style.display = 'block';
+                motivoPendente.style.display = 'none';
+            } else if (tipo === 'pendente') {
+                motivoCancelado.style.display = 'none';
+                motivoPendente.style.display = 'block';
+            }
+        }
+
+        // ============================================
+        // FUNÇÃO: getStatusExecucao
+        // ============================================
+        function getStatusExecucao() {
+            const statusConcluido = document.getElementById('statusConcluido');
+            const statusCancelado = document.getElementById('statusCancelado');
+            const statusPendente = document.getElementById('statusPendente');
+            const motivoCancelado = document.getElementById('motivoCancelado');
+            const motivoPendente = document.getElementById('motivoPendente');
+            
+            if (statusConcluido.checked) {
+                return { status: 'concluido', motivo: '' };
+            } else if (statusCancelado.checked) {
+                const motivo = motivoCancelado.value.trim();
+                return { status: 'cancelado', motivo: motivo };
+            } else if (statusPendente.checked) {
+                const motivo = motivoPendente.value.trim();
+                return { status: 'pendente', motivo: motivo };
+            }
+            
+            return { status: 'concluido', motivo: '' };
+        }
+
+        // ============================================
         // FUNÇÕES DE LOGIN
         // ============================================
         function mostrarPrimeiroAcesso() {
@@ -554,7 +621,7 @@
                     document.getElementById('usuarioLogadoNome').textContent = usuarioAtual;
                     
                     // Atualizar o link da dashboard com o nome do usuário
-                    const linkDashboard = document.querySelector('.usuario-logado a');
+                    const linkDashboard = document.querySelector('.usuario-logado .btn-dashboard');
                     if (linkDashboard) {
                         linkDashboard.href = `dashboard.html?usuario=${encodeURIComponent(usuarioAtual)}`;
                     }
@@ -758,6 +825,12 @@
                 statusSpan.style.display = 'none';
                 statusSpan.className = 'status-indicator';
                 document.getElementById('idInfo').style.display = 'none';
+                // Resetar status para "Executada com sucesso" (padrão)
+                document.getElementById('statusConcluido').checked = true;
+                document.getElementById('motivoCancelado').style.display = 'none';
+                document.getElementById('motivoPendente').style.display = 'none';
+                document.getElementById('motivoCancelado').value = '';
+                document.getElementById('motivoPendente').value = '';
             } else if (type === 'implantacao') {
                 document.getElementById('idInfoImplantacao').style.display = 'none';
                 validarQuantidadeImplantacao();
@@ -1263,6 +1336,11 @@
             const quantidade = quantidadeField ? parseInt(quantidadeField.value) || 1 : 1;
             const motivo = getMotivoFinal('ampliacao');
             
+            // Obter status da execução
+            const statusExec = getStatusExecucao();
+            const statusFinal = statusExec.status;
+            const motivoStatus = statusExec.motivo;
+            
             let idsParaSalvar = [];
             
             if (acao === 'manter') {
@@ -1276,6 +1354,7 @@
                 return;
             }
             
+            // Montar texto com o status
             let textoCompleto = `Dados da Ampliação\n\n`;
             textoCompleto += `Endereço: ${enderecoField.value}\n\n`;
             textoCompleto += `Localização: ${localizacaoField.value}\n\n`;
@@ -1286,12 +1365,17 @@
             textoCompleto += `OLT: ${oltField.value}\n\n`;
             textoCompleto += `Responsável: ${usuarioAtual}\n\n`;
             textoCompleto += `Motivo: ${motivo}\n\n`;
+            textoCompleto += `Status: ${statusFinal === 'concluido' ? '✅ Executada com sucesso' : statusFinal === 'cancelado' ? '❌ Cancelada' : '⏳ Pendenciada'}\n\n`;
+            if (motivoStatus) {
+                textoCompleto += `Motivo do status: ${motivoStatus}\n\n`;
+            }
             textoCompleto += `----------------------------------------\n\n`;
             
             // Salvar cada ID na tabela rede_atualizacao
             let salvos = 0;
             for (const id of idsParaSalvar) {
                 try {
+                    // 1. SALVAR NA TABELA rede_atualizacao
                     const { data, error } = await supabaseClient
                         .rpc('criar_atualizacao_rede', {
                             p_id_cto: id,
@@ -1307,6 +1391,24 @@
                     
                     if (!error) {
                         salvos++;
+                        
+                        // 2. ATUALIZAR STATUS NO SISTEMA ABERTURA-OS
+                        try {
+                            const { data: statusData, error: statusError } = await supabaseClient
+                                .rpc('atualizar_status_chamado_ftth', {
+                                    p_id_cto: id,
+                                    p_novo_status: statusFinal,
+                                    p_responsavel: usuarioAtual
+                                });
+                            
+                            if (statusError) {
+                                console.error('❌ Erro ao atualizar status do ID', id, statusError);
+                            } else {
+                                console.log(`✅ Status do ID ${id} atualizado para "${statusFinal}"`);
+                            }
+                        } catch (statusErr) {
+                            console.error('❌ Erro na comunicação com abertura-OS:', statusErr);
+                        }
                     } else {
                         console.error('Erro ao salvar ID', id, error);
                     }
@@ -1426,6 +1528,23 @@
                         erros.push('Por favor, especifique o motivo');
                         motivoOutro.classList.add('invalido');
                     }
+                }
+            }
+            
+            // Validar status (para ampliação)
+            if (tipo === 'ampliacao') {
+                const statusExec = getStatusExecucao();
+                if (statusExec.status === 'cancelado' && !statusExec.motivo) {
+                    erros.push('Por favor, informe o motivo do cancelamento');
+                    document.getElementById('motivoCancelado').classList.add('invalido');
+                } else {
+                    document.getElementById('motivoCancelado').classList.remove('invalido');
+                }
+                if (statusExec.status === 'pendente' && !statusExec.motivo) {
+                    erros.push('Por favor, informe o motivo da pendência');
+                    document.getElementById('motivoPendente').classList.add('invalido');
+                } else {
+                    document.getElementById('motivoPendente').classList.remove('invalido');
                 }
             }
             
@@ -1554,6 +1673,11 @@
                     idsFormatados = idsList.join(', ');
                 }
                 
+                // Obter status da execução
+                const statusExec = getStatusExecucao();
+                const statusFinal = statusExec.status;
+                const motivoStatus = statusExec.motivo;
+                
                 let idsExistentes = [];
                 let idsDisponiveis = [];
                 let detalhes = [];
@@ -1609,7 +1733,7 @@
                         confirmModal.style.display = 'flex';
                     }
                     
-                    dadosBanco = { idsExistentes, idsDisponiveis, detalhes, endereco, localizacao, coordenadas, projeto, olt, motivo, idsFormatados, quantidade };
+                    dadosBanco = { idsExistentes, idsDisponiveis, detalhes, endereco, localizacao, coordenadas, projeto, olt, motivo, idsFormatados, quantidade, statusFinal, motivoStatus };
                     return;
                 }
                 
@@ -1624,11 +1748,16 @@
                 texto += `OLT: ${olt}\n\n`;
                 texto += `Responsável: ${usuarioAtual}\n\n`;
                 texto += `Motivo: ${motivo}\n\n`;
+                texto += `Status: ${statusFinal === 'concluido' ? '✅ Executada com sucesso' : statusFinal === 'cancelado' ? '❌ Cancelada' : '⏳ Pendenciada'}\n\n`;
+                if (motivoStatus) {
+                    texto += `Motivo do status: ${motivoStatus}\n\n`;
+                }
                 
-                // Salvar cada ID individualmente no banco
+                // Salvar cada ID individualmente no banco E atualizar status
                 let salvos = 0;
                 for (const id of ids) {
                     try {
+                        // 1. SALVAR NA TABELA rede_atualizacao
                         const { data, error } = await supabaseClient
                             .rpc('criar_atualizacao_rede', {
                                 p_id_cto: id,
@@ -1644,6 +1773,24 @@
                         
                         if (!error) {
                             salvos++;
+                            
+                            // 2. ATUALIZAR STATUS NO SISTEMA ABERTURA-OS
+                            try {
+                                const { data: statusData, error: statusError } = await supabaseClient
+                                    .rpc('atualizar_status_chamado_ftth', {
+                                        p_id_cto: id,
+                                        p_novo_status: statusFinal,
+                                        p_responsavel: usuarioAtual
+                                    });
+                                
+                                if (statusError) {
+                                    console.error('❌ Erro ao atualizar status do ID', id, statusError);
+                                } else {
+                                    console.log(`✅ Status do ID ${id} atualizado para "${statusFinal}"`);
+                                }
+                            } catch (statusErr) {
+                                console.error('❌ Erro na comunicação com abertura-OS:', statusErr);
+                            }
                         } else {
                             console.error('Erro ao salvar ID', id, error);
                         }
@@ -1699,6 +1846,15 @@
                 if (idInfo) {
                     idInfo.style.display = 'none';
                 }
+                
+                // Resetar status
+                document.getElementById('statusConcluido').checked = true;
+                document.getElementById('motivoCancelado').style.display = 'none';
+                document.getElementById('motivoPendente').style.display = 'none';
+                document.getElementById('motivoCancelado').value = '';
+                document.getElementById('motivoPendente').value = '';
+                document.getElementById('motivoCancelado').classList.remove('invalido');
+                document.getElementById('motivoPendente').classList.remove('invalido');
             } else if (tipo === 'implantacao') {
                 const idInfo = document.getElementById('idInfoImplantacao');
                 if (idInfo) {
